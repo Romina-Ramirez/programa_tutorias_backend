@@ -39,7 +39,7 @@ public class StudentRepositoryImpl implements IStudentRepository {
     @Override
     public List<Student> findStudentsByCourseId(Integer courseId) {
         return this.entityManager.createQuery(
-                        "SELECT s FROM Student s JOIN s.courses WHERE c.id = :courseId",
+                        "SELECT s FROM Student s JOIN s.courses c WHERE c.id = :courseId",
                         Student.class
                 )
                 .getResultList();

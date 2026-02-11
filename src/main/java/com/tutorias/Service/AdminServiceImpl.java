@@ -73,13 +73,11 @@ public class AdminServiceImpl implements IAdminService {
             throw new RuntimeException("Ya existe un usuario con ese email");
         }
 
-        String password = generateRandomPassword(8);
-
         User user = User.builder()
                 .name(dto.getName())
                 .lastName(dto.getLastName())
                 .email(dto.getEmail())
-                .password(passwordEncoder.encode(password))
+                .password(null)
                 .role(Role.TUTOR)
                 .isDeleted(false)
                 .build();
@@ -118,10 +116,19 @@ public class AdminServiceImpl implements IAdminService {
         User user = this.userRepository.findById(tutorId)
                 .orElseThrow(() -> new NotFoundException("Tutor no encontrado"));
 
+        String password = generateRandomPassword(8);
+        String hashed = this.passwordEncoder.encode(password);
+
+        boolean updated = this.userRepository.updatePassword(user.getEmail(), hashed);
+
+        if (!updated) {
+            throw new RuntimeException("No se pudo cambiar la contraseña");
+        }
+
         boolean send = false;
 
         try {
-            this.emailService.sendnewTutor(user.getEmail(), user.getPassword());
+            this.emailService.sendnewTutor(user.getEmail(), password);
             this.tutorRepository.activate(tutorId);
             send = true;
         } catch (MessagingException e) {

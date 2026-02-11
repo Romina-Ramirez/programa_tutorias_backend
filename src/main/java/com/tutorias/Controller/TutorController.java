@@ -49,7 +49,7 @@ public class TutorController {
 
     @GetMapping("/{userId}/courses/{courseId}/grades/activity/{activity}")
     public ResponseEntity<List<GradeDTO>> getGradesByActivity(@PathVariable Integer userId, @PathVariable Integer courseId, @PathVariable String activity) {
-        return ResponseEntity.ok(tutorService.getGradesByActivity(userId, courseId, activity));
+        return ResponseEntity.ok(tutorService.getGradesByActivity(courseId, activity));
     }
 
     @PostMapping("/{userId}/courses/{courseId}/reports")

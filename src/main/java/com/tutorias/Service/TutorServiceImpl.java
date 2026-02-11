@@ -123,7 +123,7 @@ public class TutorServiceImpl implements ITutorService {
     }
 
     @Override
-    public List<GradeDTO> getGradesByActivity(Integer userId, Integer courseId, String activity) {
+    public List<GradeDTO> getGradesByActivity(Integer courseId, String activity) {
         return this.gradeRepository.findByCourseAndActivity(courseId, activity).stream()
                 .map(this.interactionMapper::convertToGradeDTO)
                 .toList();

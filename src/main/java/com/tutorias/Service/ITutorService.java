@@ -20,7 +20,7 @@ public interface ITutorService {
     // Calificaciones
     public GradeDTO addGrade(Integer userId, Integer courseId, Integer studentId, GradeDTO dto);
 
-    public List<GradeDTO> getGradesByActivity(Integer userId, Integer courseId, String activity);
+    public List<GradeDTO> getGradesByActivity(Integer courseId, String activity);
 
     // Reportes
     public ReportDTO addReport(Integer userId, Integer courseId, ReportDTO dto);
