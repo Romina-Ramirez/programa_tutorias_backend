@@ -2,9 +2,9 @@ package com.tutorias.Service.mapper;
 
 import org.springframework.stereotype.Component;
 
-import com.tutorias.Repository.Model.Student;
 import com.tutorias.Repository.Model.Tutor;
 import com.tutorias.Repository.Model.User;
+import com.tutorias.Service.dto.AdminDTO;
 import com.tutorias.Service.dto.ProfileDTO;
 import com.tutorias.Service.dto.StudentDTO;
 
@@ -38,11 +38,9 @@ public class UserMapper {
                 .career(tutor != null ? tutor.getCareer() : null)
                 .phone(tutor != null ? tutor.getPhone() : null)
                 .adminId(tutor != null ? tutor.getAdminId() : null)
+                .isActive(tutor != null ? tutor.getIsActive() : null)
+                .availableSchedule(tutor != null ? tutor.getAvailableSchedule() : null)
                 .build();
-    }
-
-    public ProfileDTO convertToProfileDTO(User user, Student student) {
-        return convertToProfileDTO(user);
     }
 
     public StudentDTO convertToStudentDTO(User user) {
@@ -52,6 +50,18 @@ public class UserMapper {
                 .id(user.getId())
                 .name(user.getName())
                 .lastName(user.getLastName())
+                .build();
+    }
+
+    public AdminDTO convertToAdminDTO(User user) {
+        if (user == null) return null;
+
+        return AdminDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .idCard(user.getIdCard())
                 .build();
     }
 }

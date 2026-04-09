@@ -11,6 +11,7 @@ import com.tutorias.Repository.Model.Student;
 import com.tutorias.Repository.Model.User;
 import com.tutorias.Service.dto.LoginResponseDTO;
 import com.tutorias.Service.dto.RegisterStudentDTO;
+import com.tutorias.Service.exception.EmailAlreadyExistsException;
 import com.tutorias.Service.exception.EmailSendException;
 import com.tutorias.Service.exception.NotFoundException;
 
@@ -35,14 +36,14 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     @Override
     public LoginResponseDTO login(String email, String password) {
         User user = this.userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("No existe una cuenta asociada a este email"));
+                .orElseThrow(() -> new NotFoundException("No existe una cuenta asociada a este email."));
 
         if (Boolean.TRUE.equals(user.getIsDeleted())) {
-            throw new RuntimeException("Cuenta desactivada");
+            throw new RuntimeException("Cuenta desactivada.");
         }
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Credenciales inválidas");
+            throw new RuntimeException("Credenciales inválidas.");
         }
 
         return LoginResponseDTO.builder()
@@ -56,7 +57,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     @Override
     public boolean registerStudent(RegisterStudentDTO dto) {
         if (this.userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Ya existe un usuario con ese email");
+            throw new EmailAlreadyExistsException("Ya existe una cuenta asociada a este email.");
         }
 
         User user = User.builder()
@@ -84,7 +85,7 @@ public class AuthenticationServiceImpl implements IAuthenticationService {
     @Override
     public boolean requestChangePassword(String email) {
         User user = this.userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("No existe una cuenta asociada a este email"));
+                .orElseThrow(() -> new RuntimeException("No existe una cuenta asociada a este email."));
 
         if (Boolean.TRUE.equals(user.getIsDeleted())) {
             throw new RuntimeException("Cuenta desactivada");

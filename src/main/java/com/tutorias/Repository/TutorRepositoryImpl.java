@@ -70,6 +70,18 @@ public class TutorRepositoryImpl implements ITutorRepository {
     }
 
     @Override
+    public boolean reassignAdmin(Integer adminId, Integer newAdminId) {
+        int updated = this.entityManager.createQuery(
+                    "UPDATE Tutor t SET t.adminId = :newAdminId WHERE t.adminId = :adminId"
+            )
+            .setParameter("newAdminId", newAdminId)
+            .setParameter("adminId", adminId)
+            .executeUpdate();
+
+        return updated == 1;
+    }
+
+    @Override
     public boolean activate(Integer id) {
         int updated = this.entityManager.createQuery(
                     "UPDATE Tutor t SET t.isActive = true WHERE t.id = :id"

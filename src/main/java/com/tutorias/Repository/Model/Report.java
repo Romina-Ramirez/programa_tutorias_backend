@@ -20,6 +20,9 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+/*
+Entidad para manejar los reportes de cada tutor
+*/
 @Entity
 @Table(name = "reports")
 @Getter @Setter 

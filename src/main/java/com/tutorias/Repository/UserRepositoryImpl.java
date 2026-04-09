@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
+import com.tutorias.Repository.Enums.Role;
 import com.tutorias.Repository.Model.User;
 
 @Repository
@@ -34,6 +35,15 @@ public class UserRepositoryImpl implements IUserRepository {
                 .getResultList();
 
         return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
+    }
+
+    public List<User> findAllAdmins() {
+        return this.entityManager.createQuery(
+                        "SELECT u FROM User u WHERE u.role = :role and u.isDeleted = false",
+                        User.class
+                )
+                .setParameter("role", Role.ADMIN)
+                .getResultList();
     }
 
     @Override

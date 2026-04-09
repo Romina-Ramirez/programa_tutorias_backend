@@ -70,7 +70,7 @@ public class AdminServiceImpl implements IAdminService {
     public ProfileDTO createTutor(Integer adminUserId, TutorDTO dto) {
 
         if (this.userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Ya existe un usuario con ese email");
+            throw new RuntimeException("Ya existe un usuario con ese email.");
         }
 
         User user = User.builder()
@@ -102,7 +102,6 @@ public class AdminServiceImpl implements IAdminService {
         
         GeneralReport gr = GeneralReport.builder()
                 .tutor(tutor)
-                .observation(null)
                 .isDeleted(false)
                 .build();
 
@@ -122,20 +121,16 @@ public class AdminServiceImpl implements IAdminService {
         boolean updated = this.userRepository.updatePassword(user.getEmail(), hashed);
 
         if (!updated) {
-            throw new RuntimeException("No se pudo cambiar la contraseña");
+            throw new RuntimeException("No se pudo crear la contraseña.");
         }
 
-        boolean send = false;
-
         try {
-            this.emailService.sendnewTutor(user.getEmail(), password);
+            this.emailService.sendnewTutorOrAdmin(user.getEmail(), password, user.getRole().name());
             this.tutorRepository.activate(tutorId);
-            send = true;
+            return true;
         } catch (MessagingException e) {
             throw new EmailSendException("No se pudo enviar el correo al tutor.");
         }
-
-        return send;
     }
 
     @Override
@@ -185,7 +180,7 @@ public class AdminServiceImpl implements IAdminService {
                 .description(dto.getDescription())
                 .schedule(dto.getSchedule())
                 .subject(dto.getSubject())
-                .quota(dto.getQuota())
+                .quota(10)
                 .status(CourseStatus.ACTIVE)
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
@@ -200,8 +195,8 @@ public class AdminServiceImpl implements IAdminService {
     }
 
     @Override
-    public List<CourseDTO> listMyCourses(Integer adminUserId) {
-        return this.courseRepository.findByAdminId(adminUserId).stream()
+    public List<CourseDTO> listCoursesByTutor(Integer tutorId) {
+        return this.courseRepository.findByTutorId(tutorId).stream()
                 .map(this.courseMapper::convertToCourseDTO)
                 .toList();
     }

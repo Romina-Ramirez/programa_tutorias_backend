@@ -73,18 +73,14 @@ public class TutorServiceImpl implements ITutorService {
         Course course = this.courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
 
-        List<StudentDTO> students = course.getStudents() == null ? List.of()
-                : course.getStudents().stream()
-                    .filter(s -> !Boolean.TRUE.equals(s.getIsDeleted()))
-                    .map(s -> this.userMapper.convertToStudentDTO(s.getUser()))
-                    .toList();
-
         return CourseTutorDetailDTO.builder()
                 .id(course.getId())
                 .name(course.getName())
                 .schedule(course.getSchedule())
                 .status(course.getStatus())
-                .students(students)
+                .startDate(course.getStartDate())
+                .endDate(course.getEndDate())
+                .description(course.getDescription())
                 .build();
     }
 
@@ -125,6 +121,13 @@ public class TutorServiceImpl implements ITutorService {
     @Override
     public List<GradeDTO> getGradesByActivity(Integer courseId, String activity) {
         return this.gradeRepository.findByCourseAndActivity(courseId, activity).stream()
+                .map(this.interactionMapper::convertToGradeDTO)
+                .toList();
+    }
+
+    @Override
+    public List<GradeDTO> getGradesByStudent(Integer courseId, Integer studentId) {
+        return this.gradeRepository.findByCourseAndStudent(courseId, studentId).stream()
                 .map(this.interactionMapper::convertToGradeDTO)
                 .toList();
     }

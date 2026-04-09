@@ -7,20 +7,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Son los datos del tutor 
+ * Datos del admin
  */
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TutorDTO {
-    private Integer userId;
+public class AdminDTO {
+    private Integer id;
+    private String idCard;
     private String name;
     private String lastName;
     private String email;
-    private String career;
-    private String phone;
-    private String availableSchedule;
-    private Boolean isActive;
 }

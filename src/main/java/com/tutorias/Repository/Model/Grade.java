@@ -18,6 +18,9 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+/*
+Entidad para manejar las notas de los estudiantes de cada curso
+*/
 @Entity
 @Table(name = "grades")
 @Getter @Setter 

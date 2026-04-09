@@ -22,6 +22,8 @@ public interface ITutorService {
 
     public List<GradeDTO> getGradesByActivity(Integer courseId, String activity);
 
+    public List<GradeDTO> getGradesByStudent(Integer courseId, Integer studentId);
+
     // Reportes
     public ReportDTO addReport(Integer userId, Integer courseId, ReportDTO dto);
 

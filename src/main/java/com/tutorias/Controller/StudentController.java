@@ -33,9 +33,9 @@ public class StudentController {
         return ResponseEntity.ok(studentService.getMyCourses(userId));
     }
 
-    @GetMapping("/{userId}/courses/{courseId}")
-    public ResponseEntity<CourseCardDTO> getCourseDetail(@PathVariable Integer userId, @PathVariable Integer courseId) {
-        return ResponseEntity.ok(studentService.getCourseDetail(userId, courseId));
+    @GetMapping("/courses/{courseId}")
+    public ResponseEntity<CourseCardDTO> getCourseDetail(@PathVariable Integer courseId) {
+        return ResponseEntity.ok(studentService.getCourseDetail(courseId));
     }
 
     @PostMapping("/{userId}/courses/{courseId}/enroll")

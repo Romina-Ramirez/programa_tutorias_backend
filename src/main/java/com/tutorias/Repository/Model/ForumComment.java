@@ -20,6 +20,9 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+/*
+
+*/
 @Entity
 @Table(name = "forum_comments")
 @Getter @Setter 

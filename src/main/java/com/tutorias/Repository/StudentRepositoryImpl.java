@@ -42,6 +42,7 @@ public class StudentRepositoryImpl implements IStudentRepository {
                         "SELECT s FROM Student s JOIN s.courses c WHERE c.id = :courseId",
                         Student.class
                 )
+                .setParameter("courseId", courseId)
                 .getResultList();
     }
 

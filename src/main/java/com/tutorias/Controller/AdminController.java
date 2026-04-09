@@ -17,6 +17,7 @@ import com.tutorias.Service.dto.ProfileDTO;
 import com.tutorias.Service.dto.TutorDTO;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -49,7 +50,7 @@ public class AdminController {
         return ResponseEntity.ok(adminService.updateTutor(adminUserId, tutorId, dto));
     }
 
-    @PutMapping("/{adminUserId}/tutors/{tutorId}")
+    @DeleteMapping("/{adminUserId}/tutors/{tutorId}")
     public ResponseEntity<Boolean> deleteTutor(@PathVariable Integer adminUserId, @PathVariable Integer tutorId) {
         return ResponseEntity.ok(adminService.deleteTutor(adminUserId, tutorId));
     }
@@ -60,9 +61,9 @@ public class AdminController {
         return ResponseEntity.ok(adminService.createCourse(adminUserId, dto));
     }
 
-    @GetMapping("/{adminUserId}/courses")
-    public ResponseEntity<List<CourseDTO>> listMyCourses(@PathVariable Integer adminUserId) {
-        return ResponseEntity.ok(adminService.listMyCourses(adminUserId));
+    @GetMapping("/{adminUserId}/tutors/{tutorId}/courses")
+    public ResponseEntity<List<CourseDTO>> listCoursesByTutor(@PathVariable Integer adminUserId, @PathVariable Integer tutorId) {
+        return ResponseEntity.ok(adminService.listCoursesByTutor(tutorId));
     }
 
     @PutMapping("/{adminUserId}/courses/{courseId}")
@@ -71,7 +72,7 @@ public class AdminController {
         return ResponseEntity.ok(adminService.updateCourse(adminUserId, dto));
     }
 
-    @PutMapping("/{adminUserId}/courses/{courseId}")
+    @DeleteMapping("/{adminUserId}/courses/{courseId}")
     public ResponseEntity<Boolean> deleteCourse(@PathVariable Integer adminUserId, @PathVariable Integer courseId) {
         return ResponseEntity.ok(adminService.deleteCourse(adminUserId, courseId));
     }

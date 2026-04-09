@@ -1,6 +1,6 @@
 package com.tutorias.Service.dto;
 
-import java.util.List;
+import java.time.LocalDate;
 
 import com.tutorias.Repository.Enums.CourseStatus;
 
@@ -22,6 +22,8 @@ public class CourseTutorDetailDTO {
     private Integer id;
     private String name;
     private String schedule;
+    private String description;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private CourseStatus status;
-    private List<StudentDTO> students;
 }

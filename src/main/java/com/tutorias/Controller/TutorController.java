@@ -52,6 +52,11 @@ public class TutorController {
         return ResponseEntity.ok(tutorService.getGradesByActivity(courseId, activity));
     }
 
+    @GetMapping("/{userId}/courses/{courseId}/students/{studentId}/grades")
+    public ResponseEntity<List<GradeDTO>> getGradesByStudent(@PathVariable Integer userId, @PathVariable Integer courseId, @PathVariable Integer studentId) {
+        return ResponseEntity.ok(tutorService.getGradesByStudent(courseId, studentId));
+    }
+
     @PostMapping("/{userId}/courses/{courseId}/reports")
     public ResponseEntity<ReportDTO> addReport(@PathVariable Integer userId, @PathVariable Integer courseId, @RequestBody ReportDTO dto) {
         return ResponseEntity.ok(tutorService.addReport(userId, courseId, dto));

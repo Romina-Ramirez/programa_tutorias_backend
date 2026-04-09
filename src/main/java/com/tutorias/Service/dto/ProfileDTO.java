@@ -27,4 +27,6 @@ public class ProfileDTO {
     private String career;
     private String phone;
     private Integer adminId;
+    private Boolean isActive;
+    private String availableSchedule;
 }

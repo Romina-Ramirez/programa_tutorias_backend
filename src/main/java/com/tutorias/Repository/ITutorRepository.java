@@ -19,6 +19,8 @@ public interface ITutorRepository {
 
     public Tutor update(Tutor tutor);
 
+    public boolean reassignAdmin(Integer adminId, Integer newAdminId);
+
     public boolean activate(Integer id);
 
     public boolean softDelete(Integer id);

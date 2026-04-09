@@ -1,5 +1,8 @@
 package com.tutorias.Service;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -15,12 +18,12 @@ public class EmailServiceImpl implements IEmailService{
     private JavaMailSender mailSender;
 
     @Override
-    public void sendnewTutor(String to, String password) throws MessagingException {
+    public void sendnewTutorOrAdmin(String to, String password, String role) throws MessagingException {
         MimeMessage msg = mailSender.createMimeMessage();
 
         MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
 
-        String link = "http://tutorias.com/login";
+        String link = "http://localhost:5173/login";
 
         String html = """
             <!DOCTYPE html>
@@ -105,7 +108,7 @@ public class EmailServiceImpl implements IEmailService{
 
         MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
 
-        String link = "http://tutorias.com/changePassword";
+        String link = "http://localhost:5173/cambiarContrasenia?email=" + URLEncoder.encode(to, StandardCharsets.UTF_8);
 
         String html = """
             <!DOCTYPE html>

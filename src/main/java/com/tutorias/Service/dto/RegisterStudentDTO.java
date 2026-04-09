@@ -19,6 +19,4 @@ public class RegisterStudentDTO {
     private String lastName;
     private String email;
     private String password;
-    private String career;
-    private String phone;
 }

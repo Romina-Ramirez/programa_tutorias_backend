@@ -20,6 +20,9 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+/*
+Entidad para manejar los usuarios con Rol de estudiante 
+*/
 @Entity
 @Table(name = "students")
 @Getter @Setter 
@@ -32,14 +35,14 @@ public class Student {
     @Column(name = "stud_id")
     private Integer id;
 
-    @Column(name = "stud_is_deleted")
-    private Boolean isDeleted;
-    
     @OneToOne
     @MapsId
     @JoinColumn(name = "stud_id")
     private User user;
 
+    @Column(name = "stud_is_deleted")
+    private Boolean isDeleted;
+    
     @ManyToMany(mappedBy = "students")
     @JsonIgnore
     private List<Course> courses;

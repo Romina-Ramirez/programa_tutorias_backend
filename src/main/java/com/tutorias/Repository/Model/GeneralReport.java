@@ -21,6 +21,9 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+/*
+Entidad para visualizar el reporte general de cada tutor
+*/
 @Entity
 @Table(name = "general_reports")
 @Getter @Setter 
@@ -34,10 +37,7 @@ public class GeneralReport {
     @SequenceGenerator(name = "gere_id_seq", sequenceName = "gere_id_seq", allocationSize = 1)
     @Column(name = "gere_id")
     private Integer id;
-
-    @Column(name = "gere_observations")
-    private String observation;              // La ingresa el administrador
-
+    
     @Column(name = "gere_is_deleted")
     private Boolean isDeleted;
     
@@ -46,6 +46,5 @@ public class GeneralReport {
     private Tutor tutor;
 
     @OneToMany(mappedBy = "generalReport")
-    //@JsonIgnore
     private List<Report> reports;
 }

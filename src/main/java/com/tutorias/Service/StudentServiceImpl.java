@@ -77,7 +77,7 @@ public class StudentServiceImpl implements IStudentService {
     }
 
     @Override
-    public CourseCardDTO getCourseDetail(Integer userId, Integer courseId) {
+    public CourseCardDTO getCourseDetail(Integer courseId) {
         Course course = this.courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
 

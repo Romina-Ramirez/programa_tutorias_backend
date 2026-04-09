@@ -19,6 +19,9 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+/*
+Entidad para manejar los usuarios con Rol de tutor
+*/
 @Entity
 @Table(name = "tutors")
 @Getter @Setter 
@@ -36,29 +39,33 @@ public class Tutor {
     @JoinColumn(name = "tuto_id")
     private User user;
 
+    /*----------------------------------------------
+      Información únicamente para el administrador
+    ------------------------------------------------*/
     @Column(name = "tuto_phone")
-    private String phone;                          // Información únicamente para el administrador
+    private String phone;
 
     @Column(name = "tuto_career")
     private String career;
 
-    @Column(name = "tuto_is_deleted")
-    private Boolean isDeleted;
-
     @Column(name = "tuto_is_Active")
-    private Boolean isActive;                      // Tutor verificado
+    private Boolean isActive;                           // Tutor verificado (El tutor recibió el correo de activación)
 
     @Column(name = "tuto_available_schedule")
-    private String availableSchedule;              // En qué horario podría dar clases
+    private String availableSchedule;                   // En qué horario podría dar clases
 
     @Column(name = "tuto_minutes_completed")
-    private Integer minutesCompleted;              // Se acumula en minutos
+    private Integer minutesCompleted;                   // Se acumula en minutos
+    /*----------------------------------------------*/
+
+    @Column(name = "tuto_is_deleted")
+    private Boolean isDeleted;                          // Eliminación lógica del tutor
 
     @Column(name = "tuto_admin_id")
-    private Integer adminId;                      // Rol de administrador
+    private Integer adminId;                            // Administrador a cargo
 
     @OneToMany(mappedBy = "tutor")
-    //@JsonIgnore
+    @JsonIgnore
     private List<Course> courses;
 
     @OneToOne(mappedBy = "tutor")

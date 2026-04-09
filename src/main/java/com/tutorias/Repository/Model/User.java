@@ -23,6 +23,13 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+/* 
+Entidad para manejar todos los tipos de usuarios de la plataforma. 
+ - Estudiante
+ - Tutor
+ - Administrador
+ - Super Administrador
+*/
 @Entity
 @Table(name = "users")
 @Getter @Setter 
@@ -42,6 +49,9 @@ public class User {
 
     @Column(name = "user_last_name")
     private String lastName;
+
+    @Column(name = "user_id_card", unique = true)
+    private String idCard;
 
     @Column(name = "user_email", unique = true)
     private String email;

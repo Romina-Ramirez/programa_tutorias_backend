@@ -1,5 +1,6 @@
 package com.tutorias.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.tutorias.Repository.Model.User;
@@ -9,6 +10,8 @@ public interface IUserRepository {
     public Optional<User> findById(Integer id);
 
     public Optional<User> findByEmail(String email);
+
+    public List<User> findAllAdmins();
 
     public boolean existsByEmail(String email);
 

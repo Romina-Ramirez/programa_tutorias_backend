@@ -23,7 +23,7 @@ public interface IAdminService {
     // Cursos
     public CourseDTO createCourse(Integer adminUserId, CourseDTO dto);
 
-    public List<CourseDTO> listMyCourses(Integer adminUserId);
+    public List<CourseDTO> listCoursesByTutor(Integer adminUserId);
 
     public CourseDTO updateCourse(Integer adminUserId, CourseDTO dto);
 

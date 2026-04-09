@@ -1,5 +1,7 @@
 package com.tutorias.Service.dto;
 
+import java.time.LocalDate;
+
 import com.tutorias.Repository.Enums.CourseStatus;
 
 import lombok.AllArgsConstructor;
@@ -24,6 +26,9 @@ public class CourseCardDTO {
     private String description;
     private String schedule;
     private String subject;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private CourseStatus status;
     private String tutor;
+    private String career;
 }

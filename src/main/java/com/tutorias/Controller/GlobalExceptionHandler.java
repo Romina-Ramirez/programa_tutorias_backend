@@ -3,10 +3,13 @@ package com.tutorias.Controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.tutorias.Service.exception.EmailAlreadyExistsException;
 import com.tutorias.Service.exception.EmailSendException;
 import com.tutorias.Service.exception.NotFoundException;
 
+@RestControllerAdvice
 public class GlobalExceptionHandler {
     
     @ExceptionHandler(RuntimeException.class)
@@ -27,6 +30,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleEmailSend(EmailSendException ex) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ex.getMessage());
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    public ResponseEntity<String> handleEmailExists(EmailAlreadyExistsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
                 .body(ex.getMessage());
     }
 }

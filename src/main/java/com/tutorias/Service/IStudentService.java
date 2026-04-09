@@ -14,7 +14,7 @@ public interface IStudentService {
 
     public boolean enroll(Integer userId, Integer courseId);
 
-    public CourseCardDTO getCourseDetail(Integer userId, Integer courseId);
+    public CourseCardDTO getCourseDetail(Integer courseId);
 
     // Calificaciones
     public StudentGradesDTO getMyGrades(Integer userId, Integer courseId);

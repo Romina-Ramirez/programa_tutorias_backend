@@ -93,7 +93,6 @@ public class InteractionMapper {
         return GeneralReportDTO.builder()
                 .tutorId(tutorId)
                 .tutorName(tutorName)
-                .observation(gr.getObservation())
                 .reports(reportDTOs)
                 .build();
     }
