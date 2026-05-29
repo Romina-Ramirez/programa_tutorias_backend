@@ -39,6 +39,14 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
     @Override
     public AdminDTO createAdmin(AdminDTO dto) {
 
+        if (dto.getIdCard() == null || dto.getIdCard().trim().isEmpty()) {
+            throw new RuntimeException("El campo cédula es obligatorio.");
+        }
+
+        if (this.userRepository.existsByIdCard(dto.getIdCard())) {
+            throw new RuntimeException("Ya existe un usuario registrado con esta cédula.");
+        }
+
         if (this.userRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Ya existe un usuario con ese email.");
         }
@@ -47,6 +55,7 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
                 .name(dto.getName())
                 .lastName(dto.getLastName())
                 .email(dto.getEmail())
+                .idCard(dto.getIdCard())
                 .password(null)
                 .role(Role.ADMIN)
                 .isDeleted(false)
@@ -57,6 +66,11 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
         sendEmailNewAdmin(user.getId());
 
         return this.userMapper.convertToAdminDTO(user);
+    }
+
+    @Override
+    public int getTutorCountByAdminId(Integer adminId) {
+        return this.tutorRepository.countByAdminId(adminId);
     }
 
     @Override
@@ -107,9 +121,10 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
 
     @Override
     public boolean deleteAdmin(Integer adminId, Integer newAdminId) {
-        this.tutorRepository.reassignAdmin(adminId, newAdminId);
+        if (newAdminId != null) {
+            this.tutorRepository.reassignAdmin(adminId, newAdminId);
+        }
         return this.userRepository.softDelete(adminId);
-        
     }
 
     public static String generateRandomPassword(int length) {

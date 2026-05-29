@@ -19,8 +19,10 @@ public class TutorDTO {
     private String name;
     private String lastName;
     private String email;
+    private String idCard;
     private String career;
     private String phone;
     private String availableSchedule;
     private Boolean isActive;
+    private String meetingUrl;
 }

@@ -1,5 +1,6 @@
 package com.tutorias.Service;
 
+import com.tutorias.Config.AuthenticatedUser;
 import com.tutorias.Service.dto.LoginResponseDTO;
 import com.tutorias.Service.dto.RegisterStudentDTO;
 
@@ -11,6 +12,8 @@ public interface IAuthenticationService {
 
     public boolean requestChangePassword(String email);
 
-    public boolean changePassword(String email, String newPassword);
+    public boolean changePassword(String email, String newPassword, String resetToken, AuthenticatedUser authenticatedUser);
+
+    public LoginResponseDTO refreshToken(String refreshToken);
     
 }

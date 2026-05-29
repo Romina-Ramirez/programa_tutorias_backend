@@ -15,6 +15,8 @@ public interface IUserRepository {
 
     public boolean existsByEmail(String email);
 
+    public boolean existsByIdCard(String idCard);
+
     public User save(User user);
 
     public User update(User user);

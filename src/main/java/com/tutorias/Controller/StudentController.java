@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tutorias.Config.SecurityAccessHelper;
 import com.tutorias.Service.IStudentService;
 import com.tutorias.Service.dto.CourseCardDTO;
 import com.tutorias.Service.dto.StudentGradesDTO;
@@ -23,6 +24,9 @@ public class StudentController {
     @Autowired
     private IStudentService studentService;
 
+    @Autowired
+    private SecurityAccessHelper securityAccessHelper;
+
     @GetMapping("/{userId}/courses/available")
     public ResponseEntity<List<CourseCardDTO>> getAvailableCourses(@PathVariable Integer userId) {
         return ResponseEntity.ok(studentService.getAvailableCourses());
@@ -30,6 +34,7 @@ public class StudentController {
 
     @GetMapping("/{userId}/courses")
     public ResponseEntity<List<CourseCardDTO>> getMyCourses(@PathVariable Integer userId) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(studentService.getMyCourses(userId));
     }
 
@@ -40,11 +45,13 @@ public class StudentController {
 
     @PostMapping("/{userId}/courses/{courseId}/enroll")
     public ResponseEntity<Boolean> enroll(@PathVariable Integer userId, @PathVariable Integer courseId) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(studentService.enroll(userId, courseId));
     }
 
     @GetMapping("/{userId}/courses/{courseId}/grades")
     public ResponseEntity<StudentGradesDTO> getMyGrades(@PathVariable Integer userId, @PathVariable Integer courseId) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(studentService.getMyGrades(userId, courseId));
     }
     

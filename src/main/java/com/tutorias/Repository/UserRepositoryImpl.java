@@ -59,6 +59,21 @@ public class UserRepositoryImpl implements IUserRepository {
     }
 
     @Override
+    public boolean existsByIdCard(String idCard) {
+        if (idCard == null || idCard.trim().isEmpty()) {
+            return false;
+        }
+        Long count = this.entityManager.createQuery(
+                        "SELECT COUNT(u.id) FROM User u WHERE u.idCard = :idCard",
+                        Long.class
+                )
+                .setParameter("idCard", idCard.trim())
+                .getSingleResult();
+
+        return count != null && count > 0;
+    }
+
+    @Override
     public User save(User user) {
         this.entityManager.persist(user);
         return user;

@@ -59,6 +59,17 @@ public class TutorRepositoryImpl implements ITutorRepository {
     }
 
     @Override
+    public int countByAdminId(Integer adminId) {
+        Long count = this.entityManager.createQuery(
+                        "SELECT COUNT(t.id) FROM Tutor t WHERE t.isDeleted = false AND t.adminId = :adminId",
+                        Long.class
+                )
+                .setParameter("adminId", adminId)
+                .getSingleResult();
+        return count != null ? count.intValue() : 0;
+    }
+
+    @Override
     public Tutor save(Tutor tutor) {
         this.entityManager.persist(tutor);
         return tutor;

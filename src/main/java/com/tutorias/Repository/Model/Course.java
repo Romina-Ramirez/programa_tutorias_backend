@@ -30,6 +30,9 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+/*
+Entidad para manejar los cursos
+*/
 @Entity
 @Table(name = "courses")
 @Getter @Setter 

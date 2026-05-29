@@ -14,5 +14,7 @@ public interface ISuperAdminService {
 
     public AdminDTO updateAdmin(Integer adminId, AdminDTO dto);
 
+    public int getTutorCountByAdminId(Integer adminId);
+
     public boolean deleteAdmin(Integer adminId, Integer newAdminId);
 }

@@ -25,7 +25,8 @@ public class ForumRepositoryImpl implements IForumRepository {
     @Override
     public List<Forum> findByCourseId(Integer courseId) {
         return this.entityManager.createQuery(
-                        "SELECT f FROM Forum f WHERE f.course.id = :courseId ORDER BY f.createdAt DESC",
+                        "SELECT f FROM Forum f WHERE f.course.id = :courseId " +
+                        "ORDER BY CASE f.type WHEN 'IMPORTANTE' THEN 1 WHEN 'RECURSO' THEN 2 ELSE 3 END, f.createdAt DESC",
                         Forum.class
                 )
                 .setParameter("courseId", courseId)
@@ -35,7 +36,8 @@ public class ForumRepositoryImpl implements IForumRepository {
     @Override
     public List<Forum> findByCourseIdNotDeleted(Integer courseId) {
         return this.entityManager.createQuery(
-                        "SELECT f FROM Forum f WHERE f.isDeleted = false AND f.course.id = :courseId ORDER BY f.createdAt DESC",
+                        "SELECT f FROM Forum f WHERE f.isDeleted = false AND f.course.id = :courseId " +
+                        "ORDER BY CASE f.type WHEN 'IMPORTANTE' THEN 1 WHEN 'RECURSO' THEN 2 ELSE 3 END, f.createdAt DESC",
                         Forum.class
                 )
                 .setParameter("courseId", courseId)

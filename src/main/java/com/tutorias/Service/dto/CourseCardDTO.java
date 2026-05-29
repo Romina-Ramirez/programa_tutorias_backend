@@ -31,4 +31,5 @@ public class CourseCardDTO {
     private CourseStatus status;
     private String tutor;
     private String career;
+    private String meetingUrl;
 }

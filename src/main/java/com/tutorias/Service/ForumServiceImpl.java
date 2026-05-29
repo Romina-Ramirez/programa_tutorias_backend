@@ -11,6 +11,7 @@ import com.tutorias.Repository.IForumCommentRepository;
 import com.tutorias.Repository.IForumRepository;
 import com.tutorias.Repository.IUserRepository;
 import com.tutorias.Repository.Enums.Role;
+import com.tutorias.Repository.Enums.ForumType;
 import com.tutorias.Repository.Model.Course;
 import com.tutorias.Repository.Model.Forum;
 import com.tutorias.Repository.Model.ForumComment;
@@ -44,8 +45,18 @@ public class ForumServiceImpl implements IForumService {
         Course course = this.courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
 
+        ForumType forumType = ForumType.ESTANDAR;
+        if (dto.getType() != null) {
+            try {
+                forumType = ForumType.valueOf(dto.getType().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                forumType = ForumType.ESTANDAR;
+            }
+        }
+
         Forum forum = Forum.builder()
                 .title(dto.getTitle())
+                .type(forumType)
                 .createdAt(LocalDateTime.now())
                 .editedAt(null)
                 .isDeleted(false)

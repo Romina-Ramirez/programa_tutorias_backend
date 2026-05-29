@@ -23,6 +23,7 @@ import com.tutorias.Service.dto.CourseTutorDetailDTO;
 import com.tutorias.Service.dto.GradeDTO;
 import com.tutorias.Service.dto.ReportDTO;
 import com.tutorias.Service.dto.StudentDTO;
+import com.tutorias.Service.dto.TutorDTO;
 import com.tutorias.Service.exception.NotFoundException;
 import com.tutorias.Service.mapper.CourseMapper;
 import com.tutorias.Service.mapper.InteractionMapper;
@@ -100,18 +101,21 @@ public class TutorServiceImpl implements ITutorService {
         Student student = this.studentRepository.findById(studentId)
                 .orElseThrow(() -> new NotFoundException("Estudiante no encontrado"));
 
+        if (student.getUser() == null) {
+            throw new RuntimeException("El estudiante no tiene usuario asociado");
+        }
+
         if (this.gradeRepository.existsByCourseStudentAndActivity(courseId, studentId, dto.getActivity())) {
             throw new RuntimeException("Ya existe una nota para esa actividad y estudiante");
         }
 
-        Grade grade = Grade.builder()
-                .activity(dto.getActivity())
-                .qualification(dto.getQualification())
-                .observations(dto.getObservations())
-                .isDeleted(false)
-                .course(course)
-                .student(student)
-                .build();
+        Grade grade = new Grade();
+        grade.setActivity(dto.getActivity());
+        grade.setQualification(dto.getQualification());
+        grade.setObservations(dto.getObservations());
+        grade.setIsDeleted(false);
+        grade.setCourse(course);
+        grade.setStudent(student);
 
         this.gradeRepository.save(grade);
 
@@ -143,13 +147,12 @@ public class TutorServiceImpl implements ITutorService {
         GeneralReport gr = this.generalReportRepository.findByTutorId(tutor.getId())
                 .orElseThrow(() -> new NotFoundException("Reporte general no encontrado"));
 
-        Report report = Report.builder()
-                .createdAt(LocalDateTime.now())
-                .activityDescription(dto.getActivityDescription())
-                .minutesCompleted(dto.getMinutesCompleted())
-                .course(course)
-                .generalReport(gr)
-                .build();
+        Report report = new Report();
+        report.setCreatedAt(LocalDateTime.now());
+        report.setActivityDescription(dto.getActivityDescription());
+        report.setMinutesCompleted(dto.getMinutesCompleted());
+        report.setCourse(course);
+        report.setGeneralReport(gr);
 
         this.reportRepository.save(report);
 
@@ -165,5 +168,42 @@ public class TutorServiceImpl implements ITutorService {
         return this.reportRepository.findByCourseId(courseId).stream()
                 .map(this.interactionMapper::convertToReportDTO)
                 .toList();
+    }
+
+    @Override
+    public TutorDTO getProfile(Integer userId) {
+        Tutor tutor = this.tutorRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("Tutor no encontrado para este usuario"));
+        
+        return TutorDTO.builder()
+                .userId(tutor.getUser().getId())
+                .name(tutor.getUser().getName())
+                .lastName(tutor.getUser().getLastName())
+                .email(tutor.getUser().getEmail())
+                .idCard(tutor.getUser().getIdCard())
+                .career(tutor.getCareer())
+                .phone(tutor.getPhone())
+                .availableSchedule(tutor.getAvailableSchedule())
+                .isActive(tutor.getIsActive())
+                .meetingUrl(tutor.getMeetingUrl())
+                .build();
+    }
+
+    @Override
+    public TutorDTO updateProfile(Integer userId, TutorDTO dto) {
+        Tutor tutor = this.tutorRepository.findByUserId(userId)
+                .orElseThrow(() -> new NotFoundException("Tutor no encontrado para este usuario"));
+        
+        // Solo permitir actualizar meetingUrl y phone
+        if (dto.getMeetingUrl() != null) {
+            tutor.setMeetingUrl(dto.getMeetingUrl());
+        }
+        if (dto.getPhone() != null) {
+            tutor.setPhone(dto.getPhone());
+        }
+        
+        this.tutorRepository.update(tutor);
+        
+        return getProfile(userId);
     }
 }

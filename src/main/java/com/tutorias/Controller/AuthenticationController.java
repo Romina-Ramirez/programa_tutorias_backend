@@ -2,6 +2,7 @@ package com.tutorias.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,9 +10,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tutorias.Config.AuthenticatedUser;
 import com.tutorias.Service.IAuthenticationService;
+import com.tutorias.Service.dto.ChangePasswordRequestDTO;
 import com.tutorias.Service.dto.LoginRequestDTO;
 import com.tutorias.Service.dto.LoginResponseDTO;
+import com.tutorias.Service.dto.RefreshTokenRequestDTO;
 import com.tutorias.Service.dto.RegisterStudentDTO;
 
 @RestController
@@ -27,6 +31,11 @@ public class AuthenticationController {
         return ResponseEntity.ok(authenticationService.login(dto.getEmail(), dto.getPassword()));
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<LoginResponseDTO> refresh(@RequestBody RefreshTokenRequestDTO dto) {
+        return ResponseEntity.ok(authenticationService.refreshToken(dto.getRefreshToken()));
+    }
+
     @PostMapping("/register-student")
     public ResponseEntity<Boolean> registerStudent(@RequestBody RegisterStudentDTO dto) {
         return ResponseEntity.ok(authenticationService.registerStudent(dto));
@@ -38,8 +47,17 @@ public class AuthenticationController {
     }
 
     @PostMapping("/change-password")
-    public ResponseEntity<Boolean> changePassword(@RequestBody LoginRequestDTO dto) {
-        return ResponseEntity.ok(authenticationService.changePassword(dto.getEmail(), dto.getPassword()));
+    public ResponseEntity<Boolean> changePassword(@RequestBody ChangePasswordRequestDTO dto, Authentication authentication) {
+        AuthenticatedUser authenticatedUser =
+                authentication != null && authentication.getPrincipal() instanceof AuthenticatedUser user
+                        ? user
+                        : null;
+
+        return ResponseEntity.ok(authenticationService.changePassword(
+                dto.getEmail(),
+                dto.getPassword(),
+                dto.getToken(),
+                authenticatedUser));
     }
     
 }

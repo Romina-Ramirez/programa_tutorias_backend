@@ -44,6 +44,11 @@ public class SuperAdminController {
         return ResponseEntity.ok(superAdminService.updateAdmin(adminId, dto));
     }
 
+    @GetMapping("/admins/{adminId}/tutor-count")
+    public ResponseEntity<Integer> getTutorCountByAdminId(@PathVariable Integer adminId) {
+        return ResponseEntity.ok(superAdminService.getTutorCountByAdminId(adminId));
+    }
+
     @DeleteMapping("/admins/{adminId}")
     public ResponseEntity<Boolean> deleteAdmin(
             @PathVariable Integer adminId,

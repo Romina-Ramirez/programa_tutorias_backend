@@ -8,16 +8,19 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tutorias.Config.SecurityAccessHelper;
 import com.tutorias.Service.ITutorService;
 import com.tutorias.Service.dto.CourseCardDTO;
 import com.tutorias.Service.dto.CourseTutorDetailDTO;
 import com.tutorias.Service.dto.GradeDTO;
 import com.tutorias.Service.dto.ReportDTO;
 import com.tutorias.Service.dto.StudentDTO;
+import com.tutorias.Service.dto.TutorDTO;
 
 @RestController
 @CrossOrigin
@@ -27,44 +30,68 @@ public class TutorController {
     @Autowired
     private ITutorService tutorService;
 
+    @Autowired
+    private SecurityAccessHelper securityAccessHelper;
+
     @GetMapping("/{userId}/courses")
     public ResponseEntity<List<CourseCardDTO>> getMyCourses(@PathVariable Integer userId) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(tutorService.getMyCourses(userId));
     }
 
     @GetMapping("/{userId}/courses/{courseId}")
     public ResponseEntity<CourseTutorDetailDTO> getCourseDetail(@PathVariable Integer userId, @PathVariable Integer courseId) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(tutorService.getCourseDetail(userId, courseId));
     }
 
     @GetMapping("/{userId}/courses/{courseId}/students")
     public ResponseEntity<List<StudentDTO>> getEnrolledStudents(@PathVariable Integer userId, @PathVariable Integer courseId) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(tutorService.getEnrolledStudents(userId, courseId));
     }
 
     @PostMapping("/{userId}/courses/{courseId}/students/{studentId}/grades")
     public ResponseEntity<GradeDTO> addGrade(@PathVariable Integer userId, @PathVariable Integer courseId, @PathVariable Integer studentId, @RequestBody GradeDTO dto) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(tutorService.addGrade(userId, courseId, studentId, dto));
     }
 
     @GetMapping("/{userId}/courses/{courseId}/grades/activity/{activity}")
     public ResponseEntity<List<GradeDTO>> getGradesByActivity(@PathVariable Integer userId, @PathVariable Integer courseId, @PathVariable String activity) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(tutorService.getGradesByActivity(courseId, activity));
     }
 
     @GetMapping("/{userId}/courses/{courseId}/students/{studentId}/grades")
     public ResponseEntity<List<GradeDTO>> getGradesByStudent(@PathVariable Integer userId, @PathVariable Integer courseId, @PathVariable Integer studentId) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(tutorService.getGradesByStudent(courseId, studentId));
     }
 
     @PostMapping("/{userId}/courses/{courseId}/reports")
     public ResponseEntity<ReportDTO> addReport(@PathVariable Integer userId, @PathVariable Integer courseId, @RequestBody ReportDTO dto) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(tutorService.addReport(userId, courseId, dto));
     }
 
-    @GetMapping("/{userId}/courses/{courseId}/reports")
+@GetMapping("/{userId}/courses/{courseId}/reports")
     public ResponseEntity<List<ReportDTO>> getReportsByCourse(@PathVariable Integer userId, @PathVariable Integer courseId) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(tutorService.getReportsByCourse(userId, courseId));
+    }
+
+    // Perfil del tutor
+    @GetMapping("/{userId}/profile")
+    public ResponseEntity<TutorDTO> getProfile(@PathVariable Integer userId) {
+        securityAccessHelper.requireSameUser(userId);
+        return ResponseEntity.ok(tutorService.getProfile(userId));
+    }
+
+    @PutMapping("/{userId}/profile")
+    public ResponseEntity<TutorDTO> updateProfile(@PathVariable Integer userId, @RequestBody TutorDTO dto) {
+        securityAccessHelper.requireSameUser(userId);
+        return ResponseEntity.ok(tutorService.updateProfile(userId, dto));
     }
     
 }

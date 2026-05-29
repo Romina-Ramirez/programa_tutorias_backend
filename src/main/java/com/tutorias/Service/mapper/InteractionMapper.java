@@ -41,6 +41,7 @@ public class InteractionMapper {
                 .id(forum.getId())
                 .title(forum.getTitle())
                 .createdAt(forum.getCreatedAt())
+                .type(forum.getType() != null ? forum.getType().name() : "ESTANDAR")
                 .build();
     }
 

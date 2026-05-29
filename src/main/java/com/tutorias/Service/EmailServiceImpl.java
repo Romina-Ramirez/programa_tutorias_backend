@@ -103,12 +103,13 @@ public class EmailServiceImpl implements IEmailService{
     }
 
     @Override
-    public void sendRequestRecoveryPassword(String to) throws MessagingException {
+    public void sendRequestRecoveryPassword(String to, String resetToken) throws MessagingException {
         MimeMessage msg = mailSender.createMimeMessage();
 
         MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
 
-        String link = "http://localhost:5173/cambiarContrasenia?email=" + URLEncoder.encode(to, StandardCharsets.UTF_8);
+        String link = "http://localhost:5173/cambiarContrasenia?token="
+                + URLEncoder.encode(resetToken, StandardCharsets.UTF_8);
 
         String html = """
             <!DOCTYPE html>

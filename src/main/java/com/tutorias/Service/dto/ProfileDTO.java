@@ -21,6 +21,7 @@ public class ProfileDTO {
     private String name;
     private String lastName;
     private String email;
+    private String idCard;
     private Role role;
 
     // Datos del profesor

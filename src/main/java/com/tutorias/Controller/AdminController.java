@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tutorias.Config.SecurityAccessHelper;
 import com.tutorias.Service.IAdminService;
 import com.tutorias.Service.dto.CourseDTO;
 import com.tutorias.Service.dto.GeneralReportDTO;
@@ -29,57 +30,70 @@ public class AdminController {
     @Autowired
     private IAdminService adminService;
 
+    @Autowired
+    private SecurityAccessHelper securityAccessHelper;
+
     // Tutores
     @PostMapping("/{adminUserId}/tutors")
     public ResponseEntity<ProfileDTO> createTutor(@PathVariable Integer adminUserId, @RequestBody TutorDTO dto) {
+        securityAccessHelper.requireSameUser(adminUserId);
         return ResponseEntity.ok(adminService.createTutor(adminUserId, dto));
     }
 
     @PutMapping("/{adminUserId}/tutors/{tutorId}/activate")
     public ResponseEntity<Boolean> activate(@PathVariable Integer adminUserId, @PathVariable Integer tutorId) {
+        securityAccessHelper.requireSameUser(adminUserId);
         return ResponseEntity.ok(adminService.sendEmailNewTutor(tutorId));
     }
 
     @GetMapping("/{adminUserId}/tutors")
     public ResponseEntity<List<ProfileDTO>> listMyTutors(@PathVariable Integer adminUserId) {
+        securityAccessHelper.requireSameUser(adminUserId);
         return ResponseEntity.ok(adminService.listMyTutors(adminUserId));
     }
 
     @PutMapping("/{adminUserId}/tutors/{tutorId}")
     public ResponseEntity<ProfileDTO> updateTutor(@PathVariable Integer adminUserId, @PathVariable Integer tutorId, @RequestBody TutorDTO dto) {
+        securityAccessHelper.requireSameUser(adminUserId);
         return ResponseEntity.ok(adminService.updateTutor(adminUserId, tutorId, dto));
     }
 
     @DeleteMapping("/{adminUserId}/tutors/{tutorId}")
     public ResponseEntity<Boolean> deleteTutor(@PathVariable Integer adminUserId, @PathVariable Integer tutorId) {
+        securityAccessHelper.requireSameUser(adminUserId);
         return ResponseEntity.ok(adminService.deleteTutor(adminUserId, tutorId));
     }
 
     // Cursos
     @PostMapping("/{adminUserId}/courses")
     public ResponseEntity<CourseDTO> createCourse(@PathVariable Integer adminUserId, @RequestBody CourseDTO dto) {
+        securityAccessHelper.requireSameUser(adminUserId);
         return ResponseEntity.ok(adminService.createCourse(adminUserId, dto));
     }
 
     @GetMapping("/{adminUserId}/tutors/{tutorId}/courses")
     public ResponseEntity<List<CourseDTO>> listCoursesByTutor(@PathVariable Integer adminUserId, @PathVariable Integer tutorId) {
+        securityAccessHelper.requireSameUser(adminUserId);
         return ResponseEntity.ok(adminService.listCoursesByTutor(tutorId));
     }
 
     @PutMapping("/{adminUserId}/courses/{courseId}")
     public ResponseEntity<CourseDTO> updateCourse(@PathVariable Integer adminUserId, @PathVariable Integer courseId, @RequestBody CourseDTO dto) {
+        securityAccessHelper.requireSameUser(adminUserId);
         dto.setId(courseId); 
         return ResponseEntity.ok(adminService.updateCourse(adminUserId, dto));
     }
 
     @DeleteMapping("/{adminUserId}/courses/{courseId}")
     public ResponseEntity<Boolean> deleteCourse(@PathVariable Integer adminUserId, @PathVariable Integer courseId) {
+        securityAccessHelper.requireSameUser(adminUserId);
         return ResponseEntity.ok(adminService.deleteCourse(adminUserId, courseId));
     }
 
     // Reporte general
     @GetMapping("/{adminUserId}/tutors/{tutorId}/general-report")
     public ResponseEntity<GeneralReportDTO> getTutorGeneralReport(@PathVariable Integer adminUserId, @PathVariable Integer tutorId) {
+        securityAccessHelper.requireSameUser(adminUserId);
         return ResponseEntity.ok(adminService.getTutorGeneralReport(adminUserId, tutorId));
     }
 }

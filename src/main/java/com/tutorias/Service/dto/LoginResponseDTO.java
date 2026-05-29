@@ -14,7 +14,7 @@ import lombok.Setter;
  *Se usará para:
  *Redirigir a una página según el rol
  *Enviar el id del usuario
-**/
+ **/
 @Getter
 @Setter
 @NoArgsConstructor
@@ -25,4 +25,7 @@ public class LoginResponseDTO {
     private Role role;
     private String name;
     private String lastName;
+    private String email;
+    private String accessToken;
+    private String refreshToken;
 }

@@ -10,6 +10,8 @@ import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
  
 import java.time.LocalDateTime;
 
@@ -17,12 +19,17 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import com.tutorias.Repository.Enums.ForumType;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
+/*
+Entidad para visualizar los foros
+*/
 @Entity
 @Table(name = "forums")
 @Getter @Setter 
@@ -48,6 +55,10 @@ public class Forum {
 
     @Column(name = "foru_is_deleted")
     private Boolean isDeleted;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "foru_type")
+    private ForumType type;
 
     @ManyToOne
     @JoinColumn(name = "cour_id")

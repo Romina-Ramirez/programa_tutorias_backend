@@ -7,6 +7,7 @@ import com.tutorias.Service.dto.CourseTutorDetailDTO;
 import com.tutorias.Service.dto.GradeDTO;
 import com.tutorias.Service.dto.ReportDTO;
 import com.tutorias.Service.dto.StudentDTO;
+import com.tutorias.Service.dto.TutorDTO;
 
 public interface ITutorService {
 
@@ -29,4 +30,8 @@ public interface ITutorService {
 
     public List<ReportDTO> getReportsByCourse(Integer userId, Integer courseId);
     
+    // Perfil
+    public TutorDTO getProfile(Integer userId);
+    
+    public TutorDTO updateProfile(Integer userId, TutorDTO dto);
 }

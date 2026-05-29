@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 
 /*
-
+Entidad para visualizar los comentarios de los foros del curso
 */
 @Entity
 @Table(name = "forum_comments")

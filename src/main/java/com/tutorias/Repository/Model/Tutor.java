@@ -64,6 +64,9 @@ public class Tutor {
     @Column(name = "tuto_admin_id")
     private Integer adminId;                            // Administrador a cargo
 
+    @Column(name = "tuto_meeting_url")
+    private String meetingUrl;                         // Link de reunión (Zoom/Meet)
+
     @OneToMany(mappedBy = "tutor")
     @JsonIgnore
     private List<Course> courses;

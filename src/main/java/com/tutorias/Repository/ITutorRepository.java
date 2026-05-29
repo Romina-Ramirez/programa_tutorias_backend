@@ -15,6 +15,8 @@ public interface ITutorRepository {
 
     public List<Tutor> findByAdminId(Integer adminId);
 
+    public int countByAdminId(Integer adminId);
+
     public Tutor save(Tutor tutor);
 
     public Tutor update(Tutor tutor);

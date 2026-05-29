@@ -69,6 +69,14 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public ProfileDTO createTutor(Integer adminUserId, TutorDTO dto) {
 
+        if (dto.getIdCard() == null || dto.getIdCard().trim().isEmpty()) {
+            throw new RuntimeException("El campo cédula es obligatorio.");
+        }
+
+        if (this.userRepository.existsByIdCard(dto.getIdCard())) {
+            throw new RuntimeException("Ya existe un usuario registrado con esta cédula.");
+        }
+
         if (this.userRepository.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Ya existe un usuario con ese email.");
         }
@@ -77,6 +85,7 @@ public class AdminServiceImpl implements IAdminService {
                 .name(dto.getName())
                 .lastName(dto.getLastName())
                 .email(dto.getEmail())
+                .idCard(dto.getIdCard())
                 .password(null)
                 .role(Role.TUTOR)
                 .isDeleted(false)
@@ -234,7 +243,7 @@ public class AdminServiceImpl implements IAdminService {
         Tutor tutor = this.tutorRepository.findById(tutorId)
                 .orElseThrow(() -> new NotFoundException("Tutor no encontrado"));
 
-        String tutorName = tutor.getUser().getName() + " " + tutor.getUser().getLastName();;
+        String tutorName = tutor.getUser().getName() + " " + tutor.getUser().getLastName();
    
         GeneralReport gr = generalReportRepository.findByTutorId(tutorId)
                 .orElseThrow(() -> new NotFoundException("Reporte general no encontrado para este tutor"));

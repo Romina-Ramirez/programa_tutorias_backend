@@ -16,9 +16,11 @@ public class CourseMapper {
 
         String tutorName = null;
         String tutorCareer = null;
+        String meetingUrl = null;
         if (course.getTutor() != null && course.getTutor().getUser() != null) {
             tutorName = course.getTutor().getUser().getName() + " " + course.getTutor().getUser().getLastName();
             tutorCareer = course.getTutor().getCareer();
+            meetingUrl = course.getTutor().getMeetingUrl();
         }
 
         return CourseCardDTO.builder()
@@ -32,6 +34,7 @@ public class CourseMapper {
                 .endDate(course.getEndDate())
                 .career(tutorCareer)
                 .tutor(tutorName)
+                .meetingUrl(meetingUrl)
                 .build();
     }
 
@@ -56,11 +59,14 @@ public class CourseMapper {
     public CourseTutorDetailDTO convertToCourseTutorDetailDTO(Course course, java.util.List<StudentDTO> students) {
         if (course == null) return null;
 
+        String meetingUrl = course.getTutor() != null ? course.getTutor().getMeetingUrl() : null;
+
         return CourseTutorDetailDTO.builder()
                 .id(course.getId())
                 .name(course.getName())
                 .schedule(course.getSchedule())
                 .status(course.getStatus())
+                .meetingUrl(meetingUrl)
                 .build();
     }
     

@@ -6,6 +6,6 @@ public interface IEmailService {
 
     public void sendnewTutorOrAdmin(String to, String password, String role) throws MessagingException;
 
-    public void sendRequestRecoveryPassword(String to) throws MessagingException;
+    public void sendRequestRecoveryPassword(String to, String resetToken) throws MessagingException;
     
 }

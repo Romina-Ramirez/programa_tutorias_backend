@@ -15,6 +15,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class RegisterStudentDTO {
+    private String idCard;
     private String name;
     private String lastName;
     private String email;

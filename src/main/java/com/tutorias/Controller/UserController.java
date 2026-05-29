@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tutorias.Config.SecurityAccessHelper;
 import com.tutorias.Service.IUserService;
 import com.tutorias.Service.dto.ProfileDTO;
 
@@ -19,8 +20,12 @@ public class UserController {
     @Autowired
     private IUserService userService;
 
+    @Autowired
+    private SecurityAccessHelper securityAccessHelper;
+
     @GetMapping("/{userId}/profile")
     public ResponseEntity<ProfileDTO> getProfile(@PathVariable Integer userId) {
+        securityAccessHelper.requireSameUser(userId);
         return ResponseEntity.ok(userService.getProfile(userId));
     }
     

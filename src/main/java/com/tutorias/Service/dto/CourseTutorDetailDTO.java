@@ -26,4 +26,5 @@ public class CourseTutorDetailDTO {
     private LocalDate startDate;
     private LocalDate endDate;
     private CourseStatus status;
+    private String meetingUrl;
 }
