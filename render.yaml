@@ -3,11 +3,14 @@ services:
     name: backend-tutorias
     runtime: java
     plan: free
+    javaVersion: "17"
     buildCommand: "./mvnw -DskipTests package"
     startCommand: "java -jar target/backend-tutorias-0.0.1-SNAPSHOT.jar"
     envVars:
       - key: JAVA_VERSION
         value: "17"
+      - key: JAVA_HOME
+        value: "/usr/lib/jvm/java-17-openjdk"
       - key: SPRING_PROFILES_ACTIVE
         value: "prod"
       - key: DB_URL
