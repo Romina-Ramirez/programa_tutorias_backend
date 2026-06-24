@@ -1,0 +1,44 @@
+services:
+  - type: web
+    name: backend-tutorias
+    runtime: java
+    plan: free
+    buildCommand: "./mvnw -DskipTests package"
+    startCommand: "java -jar target/backend-tutorias-0.0.1-SNAPSHOT.jar"
+    envVars:
+      - key: JAVA_VERSION
+        value: "17"
+      - key: SPRING_PROFILES_ACTIVE
+        value: "prod"
+      - key: DB_URL
+        fromDatabase:
+          name: tutorias-db
+          property: connectionString
+      - key: DB_USERNAME
+        fromDatabase:
+          name: tutorias-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: tutorias-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: APP_FRONTEND_URL
+        sync: false
+      - key: APP_CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_PORT
+        value: "587"
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+
+databases:
+  - name: tutorias-db
+    plan: free
+    databaseName: tutorias_db
+    user: tutorias_user

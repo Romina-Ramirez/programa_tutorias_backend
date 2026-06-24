@@ -4,6 +4,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -17,13 +18,16 @@ public class EmailServiceImpl implements IEmailService{
     @Autowired
     private JavaMailSender mailSender;
 
+    @Value("${app.frontend-url:http://localhost:5173}")
+    private String frontendUrl;
+
     @Override
     public void sendnewTutorOrAdmin(String to, String password, String role) throws MessagingException {
         MimeMessage msg = mailSender.createMimeMessage();
 
         MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
 
-        String link = "http://localhost:5173/login";
+        String link = frontendUrl + "/login";
 
         String html = """
             <!DOCTYPE html>
@@ -108,7 +112,7 @@ public class EmailServiceImpl implements IEmailService{
 
         MimeMessageHelper helper = new MimeMessageHelper(msg, true, "UTF-8");
 
-        String link = "http://localhost:5173/cambiarContrasenia?token="
+String link = frontendUrl + "/cambiarContrasenia?token="
                 + URLEncoder.encode(resetToken, StandardCharsets.UTF_8);
 
         String html = """
