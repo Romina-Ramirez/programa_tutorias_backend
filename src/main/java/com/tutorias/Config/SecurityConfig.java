@@ -72,7 +72,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource(
             @Value("${app.cors.allowed-origins:http://localhost:5173}") String allowedOrigins) {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(
+        configuration.setAllowedOriginPatterns(
                 Arrays.stream(allowedOrigins.split(","))
                         .map(String::trim)
                         .filter(value -> !value.isEmpty())
