@@ -107,14 +107,18 @@ public class AdminServiceImpl implements IAdminService {
 
         this.tutorRepository.save(tutor);
 
-        sendEmailNewTutor(user.getId());
-        
         GeneralReport gr = GeneralReport.builder()
                 .tutor(tutor)
                 .isDeleted(false)
                 .build();
 
         this.generalReportRepository.save(gr);
+
+        try {
+            sendEmailNewTutor(user.getId());
+        } catch (Exception e) {
+            System.err.println("Warning: could not send welcome email to " + user.getEmail() + ": " + e.getMessage());
+        }
 
         return this.userMapper.convertToProfileDTO(user, tutor);
     }

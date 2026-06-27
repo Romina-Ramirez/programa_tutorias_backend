@@ -63,7 +63,12 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
 
         this.userRepository.save(user);
 
-        sendEmailNewAdmin(user.getId());
+        try {
+            sendEmailNewAdmin(user.getId());
+        } catch (Exception e) {
+            // Email failed but user was already created — log and continue
+            System.err.println("Warning: could not send welcome email to " + user.getEmail() + ": " + e.getMessage());
+        }
 
         return this.userMapper.convertToAdminDTO(user);
     }
