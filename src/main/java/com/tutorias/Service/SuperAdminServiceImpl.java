@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tutorias.Repository.ITutorRepository;
 import com.tutorias.Repository.IUserRepository;
@@ -130,6 +131,75 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
             this.tutorRepository.reassignAdmin(adminId, newAdminId);
         }
         return this.userRepository.softDelete(adminId);
+    }
+
+    @Override
+    public boolean deactivateAdmin(Integer adminId) {
+        User user = this.userRepository.findById(adminId)
+                .orElseThrow(() -> new NotFoundException("Administrador no encontrado."));
+
+        if (user.getRole() != Role.ADMIN) {
+            throw new RuntimeException("El usuario indicado no es un administrador.");
+        }
+
+        return this.userRepository.softDelete(adminId);
+    }
+
+    @Transactional
+    @Override
+    public boolean hardDeleteAdmin(Integer adminId, Integer newAdminId) {
+        User user = this.userRepository.findById(adminId)
+                .orElseThrow(() -> new NotFoundException("Administrador no encontrado."));
+
+        if (user.getRole() != Role.ADMIN) {
+            throw new RuntimeException("El usuario indicado no es un administrador.");
+        }
+
+        int activeTutors = this.tutorRepository.countByAdminId(adminId);
+
+        if (activeTutors > 0) {
+            if (newAdminId == null) {
+                throw new RuntimeException(
+                        "Debe transferir los tutores de este administrador a otro antes de eliminarlo.");
+            }
+            if (newAdminId.equals(adminId)) {
+                throw new RuntimeException("No puede transferir los tutores al mismo administrador.");
+            }
+
+            User newAdmin = this.userRepository.findById(newAdminId)
+                    .orElseThrow(() -> new NotFoundException("El administrador destino no existe."));
+
+            if (newAdmin.getRole() != Role.ADMIN || Boolean.TRUE.equals(newAdmin.getIsDeleted())) {
+                throw new RuntimeException("El administrador destino no es válido.");
+            }
+
+            this.tutorRepository.reassignAdmin(adminId, newAdminId);
+        }
+
+        return this.userRepository.hardDelete(adminId);
+    }
+
+    @Override
+    public AdminDTO activateAdminByIdCard(String idCard) {
+        if (idCard == null || idCard.trim().isEmpty()) {
+            throw new RuntimeException("El campo cédula es obligatorio.");
+        }
+
+        User user = this.userRepository.findByIdCard(idCard.trim())
+                .orElseThrow(() -> new NotFoundException("No existe un administrador con esa cédula."));
+
+        if (user.getRole() != Role.ADMIN) {
+            throw new RuntimeException("La cédula no corresponde a un administrador.");
+        }
+
+        if (Boolean.FALSE.equals(user.getIsDeleted())) {
+            throw new RuntimeException("El administrador con esa cédula ya está activo.");
+        }
+
+        this.userRepository.restore(user.getId());
+        user.setIsDeleted(false);
+
+        return this.userMapper.convertToAdminDTO(user);
     }
 
     public static String generateRandomPassword(int length) {

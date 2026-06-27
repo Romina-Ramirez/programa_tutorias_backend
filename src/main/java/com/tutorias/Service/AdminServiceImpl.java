@@ -2,10 +2,12 @@ package com.tutorias.Service;
 
 import java.security.SecureRandom;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.tutorias.Repository.ICourseRepository;
 import com.tutorias.Repository.IGeneralReportRepository;
@@ -180,6 +182,70 @@ public class AdminServiceImpl implements IAdminService {
         boolean userDeleted = this.userRepository.softDelete(tutorId);
 
         return tutorDeleted && userDeleted;
+    }
+
+    @Override
+    public boolean deactivateTutor(Integer adminUserId, Integer tutorId) {
+        boolean tutorDeleted = this.tutorRepository.softDelete(tutorId);
+        boolean userDeleted = this.userRepository.softDelete(tutorId);
+        return tutorDeleted && userDeleted;
+    }
+
+    @Transactional
+    @Override
+    public boolean hardDeleteTutor(Integer adminUserId, Integer tutorId) {
+        Tutor tutor = this.tutorRepository.findById(tutorId)
+                .orElseThrow(() -> new NotFoundException("Tutor no encontrado."));
+
+        if (!Objects.equals(tutor.getAdminId(), adminUserId)) {
+            throw new RuntimeException("Este tutor no pertenece a su lista.");
+        }
+
+        long courseCount = this.courseRepository.countByTutorId(tutorId);
+        if (courseCount > 0) {
+            throw new RuntimeException(
+                    "No se puede eliminar definitivamente este tutor porque tiene cursos asociados. Desactívelo en su lugar.");
+        }
+
+        // Borrado en orden de FK: reports -> general report -> tutor -> user.
+        this.generalReportRepository.hardDeleteReportsByTutorId(tutorId);
+        this.generalReportRepository.hardDeleteByTutorId(tutorId);
+        boolean tutorDeleted = this.tutorRepository.hardDelete(tutorId);
+        boolean userDeleted = this.userRepository.hardDelete(tutorId);
+
+        return tutorDeleted && userDeleted;
+    }
+
+    @Override
+    public ProfileDTO activateTutorByIdCard(Integer adminUserId, String idCard) {
+        if (idCard == null || idCard.trim().isEmpty()) {
+            throw new RuntimeException("El campo cédula es obligatorio.");
+        }
+
+        User user = this.userRepository.findByIdCard(idCard.trim())
+                .orElseThrow(() -> new NotFoundException("No existe un tutor con esa cédula."));
+
+        if (user.getRole() != Role.TUTOR) {
+            throw new RuntimeException("La cédula no corresponde a un tutor.");
+        }
+
+        Tutor tutor = this.tutorRepository.findById(user.getId())
+                .orElseThrow(() -> new NotFoundException("No existe un tutor con esa cédula."));
+
+        if (!Objects.equals(tutor.getAdminId(), adminUserId)) {
+            throw new RuntimeException("Este tutor no pertenece a su lista.");
+        }
+
+        if (Boolean.FALSE.equals(user.getIsDeleted()) && Boolean.FALSE.equals(tutor.getIsDeleted())) {
+            throw new RuntimeException("El tutor con esa cédula ya está activo.");
+        }
+
+        this.userRepository.restore(user.getId());
+        this.tutorRepository.restore(tutor.getId());
+        user.setIsDeleted(false);
+        tutor.setIsDeleted(false);
+
+        return this.userMapper.convertToProfileDTO(user, tutor);
     }
 
     // Cursos

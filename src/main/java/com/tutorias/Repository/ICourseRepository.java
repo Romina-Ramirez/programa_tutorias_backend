@@ -28,6 +28,9 @@ public interface ICourseRepository {
 
     public long countEnrolledStudents(Integer id);
 
+    // Cuenta TODOS los cursos del tutor (incl. soft-deleted) para validar borrado físico del tutor.
+    public long countByTutorId(Integer tutorId);
+
     public boolean enrollStudent(Integer courseId, Integer studentId);
 
     public boolean softDelete(Integer id);

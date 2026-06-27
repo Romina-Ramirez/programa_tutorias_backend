@@ -55,4 +55,23 @@ public class GeneralReportRepositoryImpl implements IGeneralReportRepository {
 
         return updated == 1;
     }
+
+    @Override
+    public int hardDeleteReportsByTutorId(Integer tutorId) {
+        return this.entityManager.createQuery(
+                        "DELETE FROM Report r WHERE r.generalReport.id IN " +
+                        "(SELECT gr.id FROM GeneralReport gr WHERE gr.tutor.id = :tutorId)"
+                )
+                .setParameter("tutorId", tutorId)
+                .executeUpdate();
+    }
+
+    @Override
+    public int hardDeleteByTutorId(Integer tutorId) {
+        return this.entityManager.createQuery(
+                        "DELETE FROM GeneralReport gr WHERE gr.tutor.id = :tutorId"
+                )
+                .setParameter("tutorId", tutorId)
+                .executeUpdate();
+    }
 }

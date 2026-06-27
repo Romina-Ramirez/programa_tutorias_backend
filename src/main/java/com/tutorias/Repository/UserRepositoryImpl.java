@@ -115,4 +115,31 @@ public class UserRepositoryImpl implements IUserRepository {
         this.entityManager.remove(user);
         return true;
     }
+
+    @Override
+    public Optional<User> findByIdCard(String idCard) {
+        if (idCard == null || idCard.trim().isEmpty()) {
+            return Optional.empty();
+        }
+        List<User> users = this.entityManager.createQuery(
+                        "SELECT u FROM User u WHERE u.idCard = :idCard",
+                        User.class
+                )
+                .setParameter("idCard", idCard.trim())
+                .setMaxResults(1)
+                .getResultList();
+
+        return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
+    }
+
+    @Override
+    public boolean restore(Integer id) {
+        int updated = this.entityManager.createQuery(
+                        "UPDATE User u SET u.isDeleted = false WHERE u.id = :id"
+                )
+                .setParameter("id", id)
+                .executeUpdate();
+
+        return updated == 1;
+    }
 }

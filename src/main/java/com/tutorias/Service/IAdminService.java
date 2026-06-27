@@ -20,6 +20,15 @@ public interface IAdminService {
 
     public boolean deleteTutor(Integer adminUserId, Integer tutorId);
 
+    // Desactiva (soft-delete) un tutor: desaparece de la lista pero queda en BD.
+    public boolean deactivateTutor(Integer adminUserId, Integer tutorId);
+
+    // Elimina físicamente un tutor. Solo si no tiene cursos asociados.
+    public boolean hardDeleteTutor(Integer adminUserId, Integer tutorId);
+
+    // Reactiva un tutor desactivado de este admin buscándolo por cédula.
+    public ProfileDTO activateTutorByIdCard(Integer adminUserId, String idCard);
+
     // Cursos
     public CourseDTO createCourse(Integer adminUserId, CourseDTO dto);
 

@@ -26,4 +26,10 @@ public interface IUserRepository {
     public boolean softDelete(Integer id);
 
     public boolean hardDelete(Integer id);
+
+    // Busca por cédula aunque el usuario esté desactivado (soft-deleted). Para reactivar.
+    public Optional<User> findByIdCard(String idCard);
+
+    // Reactiva (restore) un usuario: isDeleted = false.
+    public boolean restore(Integer id);
 }

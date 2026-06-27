@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @CrossOrigin
@@ -62,6 +63,27 @@ public class AdminController {
     public ResponseEntity<Boolean> deleteTutor(@PathVariable Integer adminUserId, @PathVariable Integer tutorId) {
         securityAccessHelper.requireSameUser(adminUserId);
         return ResponseEntity.ok(adminService.deleteTutor(adminUserId, tutorId));
+    }
+
+    // Desactivar tutor (soft-delete): desaparece de la lista pero queda en BD.
+    @PutMapping("/{adminUserId}/tutors/{tutorId}/deactivate")
+    public ResponseEntity<Boolean> deactivateTutor(@PathVariable Integer adminUserId, @PathVariable Integer tutorId) {
+        securityAccessHelper.requireSameUser(adminUserId);
+        return ResponseEntity.ok(adminService.deactivateTutor(adminUserId, tutorId));
+    }
+
+    // Eliminar tutor (físico). Solo si no tiene cursos asociados.
+    @DeleteMapping("/{adminUserId}/tutors/{tutorId}/hard")
+    public ResponseEntity<Boolean> hardDeleteTutor(@PathVariable Integer adminUserId, @PathVariable Integer tutorId) {
+        securityAccessHelper.requireSameUser(adminUserId);
+        return ResponseEntity.ok(adminService.hardDeleteTutor(adminUserId, tutorId));
+    }
+
+    // Reactivar tutor por cédula.
+    @PutMapping("/{adminUserId}/tutors/reactivate")
+    public ResponseEntity<ProfileDTO> reactivateTutor(@PathVariable Integer adminUserId, @RequestParam String idCard) {
+        securityAccessHelper.requireSameUser(adminUserId);
+        return ResponseEntity.ok(adminService.activateTutorByIdCard(adminUserId, idCard));
     }
 
     // Cursos

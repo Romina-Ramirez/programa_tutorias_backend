@@ -89,7 +89,8 @@ public class TutorRepositoryImpl implements ITutorRepository {
             .setParameter("adminId", adminId)
             .executeUpdate();
 
-        return updated == 1;
+        // Puede reasignar varios tutores a la vez; basta con que no falle.
+        return updated >= 0;
     }
 
     @Override
@@ -112,5 +113,25 @@ public class TutorRepositoryImpl implements ITutorRepository {
                 .executeUpdate();
 
         return updated == 1;
+    }
+
+    @Override
+    public boolean restore(Integer id) {
+        int updated = this.entityManager.createQuery(
+                        "UPDATE Tutor t SET t.isDeleted = false WHERE t.id = :id"
+                )
+                .setParameter("id", id)
+                .executeUpdate();
+
+        return updated == 1;
+    }
+
+    @Override
+    public boolean hardDelete(Integer id) {
+        Tutor tutor = this.entityManager.find(Tutor.class, id);
+        if (tutor == null) return false;
+
+        this.entityManager.remove(tutor);
+        return true;
     }
 }

@@ -14,4 +14,10 @@ public interface IGeneralReportRepository {
     public GeneralReport update(GeneralReport generalReport);
 
     public boolean softDelete(Integer id);
+
+    // Borra físicamente los reports asociados al general report del tutor (hijos primero).
+    public int hardDeleteReportsByTutorId(Integer tutorId);
+
+    // Borra físicamente el general report del tutor.
+    public int hardDeleteByTutorId(Integer tutorId);
 }

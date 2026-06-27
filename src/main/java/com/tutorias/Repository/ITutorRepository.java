@@ -26,4 +26,10 @@ public interface ITutorRepository {
     public boolean activate(Integer id);
 
     public boolean softDelete(Integer id);
+
+    // Reactiva (restore) el tutor: isDeleted = false. No toca isActive (verificación de correo).
+    public boolean restore(Integer id);
+
+    // Borrado físico del tutor.
+    public boolean hardDelete(Integer id);
 }

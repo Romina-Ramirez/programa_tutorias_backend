@@ -116,6 +116,18 @@ public class CourseRepositoryImpl implements ICourseRepository {
     }
 
     @Override
+    public long countByTutorId(Integer tutorId) {
+        Long count = this.entityManager.createQuery(
+                        "SELECT COUNT(c.id) FROM Course c WHERE c.tutor.id = :tutorId",
+                        Long.class
+                )
+                .setParameter("tutorId", tutorId)
+                .getSingleResult();
+
+        return (count == null) ? 0L : count;
+    }
+
+    @Override
     public boolean enrollStudent(Integer courseId, Integer studentId) {
         int inserted = this.entityManager.createNativeQuery(
                         "INSERT INTO course_student (cour_id, stud_id) VALUES (:courseId, :studentId)"

@@ -58,4 +58,25 @@ public class SuperAdminController {
                 superAdminService.deleteAdmin(adminId, newAdminId)
         );
     }
+
+    // Desactivar admin (soft-delete): desaparece de la lista pero queda en BD.
+    @PutMapping("/admins/{adminId}/deactivate")
+    public ResponseEntity<Boolean> deactivateAdmin(@PathVariable Integer adminId) {
+        return ResponseEntity.ok(superAdminService.deactivateAdmin(adminId));
+    }
+
+    // Eliminar admin (físico). Si tiene tutores activos exige reasignarlos (newAdminId).
+    @DeleteMapping("/admins/{adminId}/hard")
+    public ResponseEntity<Boolean> hardDeleteAdmin(
+            @PathVariable Integer adminId,
+            @RequestParam(required = false) Integer newAdminId
+    ) {
+        return ResponseEntity.ok(superAdminService.hardDeleteAdmin(adminId, newAdminId));
+    }
+
+    // Reactivar admin por cédula.
+    @PutMapping("/admins/reactivate")
+    public ResponseEntity<AdminDTO> reactivateAdmin(@RequestParam String idCard) {
+        return ResponseEntity.ok(superAdminService.activateAdminByIdCard(idCard));
+    }
 }
