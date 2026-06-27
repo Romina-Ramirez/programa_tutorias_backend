@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import jakarta.mail.MessagingException;
@@ -22,6 +23,7 @@ public class EmailServiceImpl implements IEmailService{
     private String frontendUrl;
 
     @Override
+    @Async("mailExecutor")
     public void sendnewTutorOrAdmin(String to, String password, String role) throws MessagingException {
         MimeMessage msg = mailSender.createMimeMessage();
 
@@ -107,6 +109,7 @@ public class EmailServiceImpl implements IEmailService{
     }
 
     @Override
+    @Async("mailExecutor")
     public void sendRequestRecoveryPassword(String to, String resetToken) throws MessagingException {
         MimeMessage msg = mailSender.createMimeMessage();
 

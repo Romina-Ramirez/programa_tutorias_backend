@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/ping").permitAll()
                         .requestMatchers("/authentication/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/student/courses/*").permitAll()
                         .requestMatchers(HttpMethod.GET, "/student/*/courses/available").permitAll()
