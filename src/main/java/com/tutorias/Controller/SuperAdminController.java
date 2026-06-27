@@ -52,7 +52,7 @@ public class SuperAdminController {
     @DeleteMapping("/admins/{adminId}")
     public ResponseEntity<Boolean> deleteAdmin(
             @PathVariable Integer adminId,
-            @RequestParam Integer newAdminId
+            @RequestParam(required = false) Integer newAdminId
     ) {
         return ResponseEntity.ok(
                 superAdminService.deleteAdmin(adminId, newAdminId)
