@@ -82,6 +82,7 @@ public class TutorServiceImpl implements ITutorService {
                 .startDate(course.getStartDate())
                 .endDate(course.getEndDate())
                 .description(course.getDescription())
+                .meetingUrl(course.getTutor() != null ? course.getTutor().getMeetingUrl() : null)
                 .build();
     }
 
