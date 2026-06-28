@@ -21,4 +21,5 @@ public class ReportDTO {
     private LocalDateTime createdAt;
     private String activityDescription;
     private Integer minutesCompleted;
+    private Integer courseId;
 }

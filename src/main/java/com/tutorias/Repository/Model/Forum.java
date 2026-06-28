@@ -65,6 +65,11 @@ public class Forum {
     @JsonIgnore
     private Course course;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnore
+    private User user;                             // Autor del foro (tutor que lo crea)
+
     @OneToMany(mappedBy = "forum")
     @JsonIgnore
     private List<ForumComment> comments;

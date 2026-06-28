@@ -37,11 +37,17 @@ public class InteractionMapper {
     public ForumDTO convertToForumDTO(Forum forum) {
         if (forum == null) return null;
 
+        User author = forum.getUser();
+        String authorName = (author == null)
+                ? null
+                : (author.getName() + " " + author.getLastName());
+
         return ForumDTO.builder()
                 .id(forum.getId())
                 .title(forum.getTitle())
                 .createdAt(forum.getCreatedAt())
                 .type(forum.getType() != null ? forum.getType().name() : "ESTANDAR")
+                .authorName(authorName)
                 .build();
     }
 
@@ -80,6 +86,7 @@ public class InteractionMapper {
                 .createdAt(report.getCreatedAt())
                 .activityDescription(report.getActivityDescription())
                 .minutesCompleted(report.getMinutesCompleted())
+                .courseId(report.getCourse() != null ? report.getCourse().getId() : null)
                 .build();
     }
 

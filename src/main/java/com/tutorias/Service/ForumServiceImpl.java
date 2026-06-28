@@ -45,6 +45,9 @@ public class ForumServiceImpl implements IForumService {
         Course course = this.courseRepository.findById(courseId)
                 .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
 
+        User user = this.userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
+
         ForumType forumType = ForumType.ESTANDAR;
         if (dto.getType() != null) {
             try {
@@ -61,6 +64,7 @@ public class ForumServiceImpl implements IForumService {
                 .editedAt(null)
                 .isDeleted(false)
                 .course(course)
+                .user(user)
                 .build();
 
         this.forumRepository.save(forum);

@@ -21,4 +21,5 @@ public class ForumDTO {
     private String title;
     private LocalDateTime createdAt;
     private String type;
+    private String authorName;
 }
