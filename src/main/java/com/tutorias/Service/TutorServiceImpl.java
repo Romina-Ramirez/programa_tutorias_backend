@@ -148,16 +148,18 @@ public class TutorServiceImpl implements ITutorService {
         GeneralReport gr = this.generalReportRepository.findByTutorId(tutor.getId())
                 .orElseThrow(() -> new NotFoundException("Reporte general no encontrado"));
 
+        int minutes = dto.getMinutesCompleted() == null ? 0 : dto.getMinutesCompleted();
+
         Report report = new Report();
         report.setCreatedAt(LocalDateTime.now());
         report.setActivityDescription(dto.getActivityDescription());
-        report.setMinutesCompleted(dto.getMinutesCompleted());
+        report.setMinutesCompleted(minutes);
         report.setCourse(course);
         report.setGeneralReport(gr);
 
         this.reportRepository.save(report);
 
-        tutor.setMinutesCompleted((tutor.getMinutesCompleted() == null ? 0 : tutor.getMinutesCompleted()) + dto.getMinutesCompleted());
+        tutor.setMinutesCompleted((tutor.getMinutesCompleted() == null ? 0 : tutor.getMinutesCompleted()) + minutes);
 
         this.tutorRepository.update(tutor);
 
