@@ -79,4 +79,10 @@ public class SuperAdminController {
     public ResponseEntity<AdminDTO> reactivateAdmin(@RequestParam String idCard) {
         return ResponseEntity.ok(superAdminService.activateAdminByIdCard(idCard));
     }
+
+    // Reenviar correo con una nueva contraseña al administrador.
+    @PostMapping("/admins/{adminId}/resend-email")
+    public ResponseEntity<Boolean> resendAdminEmail(@PathVariable Integer adminId) {
+        return ResponseEntity.ok(superAdminService.sendEmailNewAdmin(adminId));
+    }
 }

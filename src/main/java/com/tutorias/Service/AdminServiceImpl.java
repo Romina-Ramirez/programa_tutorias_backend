@@ -130,6 +130,10 @@ public class AdminServiceImpl implements IAdminService {
         User user = this.userRepository.findById(tutorId)
                 .orElseThrow(() -> new NotFoundException("Tutor no encontrado"));
 
+        if (user.getRole() != Role.TUTOR) {
+            throw new RuntimeException("El usuario indicado no es un tutor.");
+        }
+
         String password = generateRandomPassword(8);
         String hashed = this.passwordEncoder.encode(password);
 
@@ -249,6 +253,17 @@ public class AdminServiceImpl implements IAdminService {
     }
 
     // Cursos
+    private static final int MIN_QUOTA = 5;
+    private static final int MAX_QUOTA = 40;
+
+    private int validateQuota(Integer quota) {
+        int value = (quota == null) ? 10 : quota;
+        if (value < MIN_QUOTA || value > MAX_QUOTA) {
+            throw new RuntimeException("El cupo máximo debe estar entre " + MIN_QUOTA + " y " + MAX_QUOTA + ".");
+        }
+        return value;
+    }
+
     @Override
     public CourseDTO createCourse(Integer adminUserId, CourseDTO dto) {
         Tutor tutor = this.tutorRepository.findById(dto.getTutorId())
@@ -259,7 +274,7 @@ public class AdminServiceImpl implements IAdminService {
                 .description(dto.getDescription())
                 .schedule(dto.getSchedule())
                 .subject(dto.getSubject())
-                .quota(10)
+                .quota(validateQuota(dto.getQuota()))
                 .status(CourseStatus.ACTIVE)
                 .startDate(dto.getStartDate())
                 .endDate(dto.getEndDate())
@@ -289,7 +304,7 @@ public class AdminServiceImpl implements IAdminService {
         if (dto.getDescription() != null) course.setDescription(dto.getDescription());
         if (dto.getSchedule() != null) course.setSchedule(dto.getSchedule());
         if (dto.getSubject() != null) course.setSubject(dto.getSubject());
-        if (dto.getQuota() != null) course.setQuota(dto.getQuota());
+        if (dto.getQuota() != null) course.setQuota(validateQuota(dto.getQuota()));
         if (dto.getStartDate() != null) course.setStartDate(dto.getStartDate());
         if (dto.getEndDate() != null) course.setEndDate(dto.getEndDate());
         if (dto.getDurationMinutes() != null) course.setDurationMinutes(dto.getDurationMinutes());

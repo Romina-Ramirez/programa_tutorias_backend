@@ -85,6 +85,10 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
         User user = this.userRepository.findById(adminId)
                 .orElseThrow(() -> new NotFoundException("Admin no encontrado"));
 
+        if (user.getRole() != Role.ADMIN) {
+            throw new RuntimeException("El usuario indicado no es un administrador.");
+        }
+
         String password = generateRandomPassword(8);
         String hashed = this.passwordEncoder.encode(password);
 
