@@ -30,6 +30,8 @@ import com.tutorias.Service.mapper.InteractionMapper;
 import com.tutorias.Service.mapper.UserMapper;
 
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 import com.tutorias.Service.exception.EmailSendException;
 import com.tutorias.Service.exception.NotFoundException;
@@ -66,6 +68,9 @@ public class AdminServiceImpl implements IAdminService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     // Tutores
     @Override
@@ -210,6 +215,12 @@ public class AdminServiceImpl implements IAdminService {
             throw new RuntimeException(
                     "No se puede eliminar definitivamente este tutor porque tiene cursos asociados. Desactívelo en su lugar.");
         }
+
+        // Al cargar el tutor (findById) se trae también su GeneralReport por la relación
+        // @OneToOne(mappedBy="tutor"), quedando como entidad administrada. Los DELETE masivos
+        // siguientes dejarían esa entidad obsoleta y Hibernate fallaría al hacer flush
+        // (TransientPropertyValueException). Limpiamos el contexto antes de los borrados.
+        this.entityManager.clear();
 
         // Borrado en orden de FK: reports -> general report -> tutor -> user.
         this.generalReportRepository.hardDeleteReportsByTutorId(tutorId);
