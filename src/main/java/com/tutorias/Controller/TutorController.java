@@ -60,13 +60,13 @@ public class TutorController {
     @GetMapping("/{userId}/courses/{courseId}/grades/activity/{activity}")
     public ResponseEntity<List<GradeDTO>> getGradesByActivity(@PathVariable Integer userId, @PathVariable Integer courseId, @PathVariable String activity) {
         securityAccessHelper.requireSameUser(userId);
-        return ResponseEntity.ok(tutorService.getGradesByActivity(courseId, activity));
+        return ResponseEntity.ok(tutorService.getGradesByActivity(userId, courseId, activity));
     }
 
     @GetMapping("/{userId}/courses/{courseId}/students/{studentId}/grades")
     public ResponseEntity<List<GradeDTO>> getGradesByStudent(@PathVariable Integer userId, @PathVariable Integer courseId, @PathVariable Integer studentId) {
         securityAccessHelper.requireSameUser(userId);
-        return ResponseEntity.ok(tutorService.getGradesByStudent(courseId, studentId));
+        return ResponseEntity.ok(tutorService.getGradesByStudent(userId, courseId, studentId));
     }
 
     @PostMapping("/{userId}/courses/{courseId}/reports")

@@ -2,8 +2,10 @@ package com.tutorias.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import com.tutorias.Repository.ICourseRepository;
@@ -59,6 +61,17 @@ public class TutorServiceImpl implements ITutorService {
     @Autowired 
     private InteractionMapper interactionMapper;
 
+    // Verifica que el curso exista y pertenezca al tutor autenticado (403 si no).
+    private Course requireOwnedCourse(Integer userId, Integer courseId) {
+        Course course = this.courseRepository.findById(courseId)
+                .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
+
+        if (course.getTutor() == null || !Objects.equals(course.getTutor().getId(), userId)) {
+            throw new AccessDeniedException("No tiene permisos para acceder a este curso.");
+        }
+        return course;
+    }
+
     @Override
     public List<CourseCardDTO> getMyCourses(Integer userId) {
         Tutor tutor = this.tutorRepository.findByUserId(userId)
@@ -71,8 +84,7 @@ public class TutorServiceImpl implements ITutorService {
 
     @Override
     public CourseTutorDetailDTO getCourseDetail(Integer userId, Integer courseId) {
-        Course course = this.courseRepository.findById(courseId)
-                .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
+        Course course = requireOwnedCourse(userId, courseId);
 
         return CourseTutorDetailDTO.builder()
                 .id(course.getId())
@@ -88,6 +100,8 @@ public class TutorServiceImpl implements ITutorService {
 
     @Override
     public List<StudentDTO> getEnrolledStudents(Integer userId, Integer courseId) {
+        requireOwnedCourse(userId, courseId);
+
         return this.studentRepository.findStudentsByCourseId(courseId).stream()
                 .filter(s -> !Boolean.TRUE.equals(s.getIsDeleted()))
                 .map(s -> this.userMapper.convertToStudentDTO(s.getUser()))
@@ -96,8 +110,14 @@ public class TutorServiceImpl implements ITutorService {
 
     @Override
     public GradeDTO addGrade(Integer userId, Integer courseId, Integer studentId, GradeDTO dto) {
-        Course course = this.courseRepository.findById(courseId)
-                .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
+        Course course = requireOwnedCourse(userId, courseId);
+
+        if (dto.getActivity() == null || dto.getActivity().trim().isEmpty()) {
+            throw new RuntimeException("La actividad es obligatoria.");
+        }
+        if (dto.getQualification() == null || dto.getQualification() < 0 || dto.getQualification() > 20) {
+            throw new RuntimeException("La calificación debe estar entre 0 y 20.");
+        }
 
         Student student = this.studentRepository.findById(studentId)
                 .orElseThrow(() -> new NotFoundException("Estudiante no encontrado"));
@@ -124,14 +144,18 @@ public class TutorServiceImpl implements ITutorService {
     }
 
     @Override
-    public List<GradeDTO> getGradesByActivity(Integer courseId, String activity) {
+    public List<GradeDTO> getGradesByActivity(Integer userId, Integer courseId, String activity) {
+        requireOwnedCourse(userId, courseId);
+
         return this.gradeRepository.findByCourseAndActivity(courseId, activity).stream()
                 .map(this.interactionMapper::convertToGradeDTO)
                 .toList();
     }
 
     @Override
-    public List<GradeDTO> getGradesByStudent(Integer courseId, Integer studentId) {
+    public List<GradeDTO> getGradesByStudent(Integer userId, Integer courseId, Integer studentId) {
+        requireOwnedCourse(userId, courseId);
+
         return this.gradeRepository.findByCourseAndStudent(courseId, studentId).stream()
                 .map(this.interactionMapper::convertToGradeDTO)
                 .toList();
@@ -142,13 +166,19 @@ public class TutorServiceImpl implements ITutorService {
         Tutor tutor = this.tutorRepository.findByUserId(userId)
                 .orElseThrow(() -> new NotFoundException("Tutor no encontrado para este usuario"));
 
-        Course course = this.courseRepository.findById(courseId)
-                .orElseThrow(() -> new NotFoundException("Curso no encontrado"));
+        Course course = requireOwnedCourse(userId, courseId);
+
+        if (dto.getActivityDescription() == null || dto.getActivityDescription().trim().isEmpty()) {
+            throw new RuntimeException("La descripción de la actividad es obligatoria.");
+        }
+        if (dto.getMinutesCompleted() == null || dto.getMinutesCompleted() < 1 || dto.getMinutesCompleted() > 360) {
+            throw new RuntimeException("Los minutos deben estar entre 1 y 360.");
+        }
 
         GeneralReport gr = this.generalReportRepository.findByTutorId(tutor.getId())
                 .orElseThrow(() -> new NotFoundException("Reporte general no encontrado"));
 
-        int minutes = dto.getMinutesCompleted() == null ? 0 : dto.getMinutesCompleted();
+        int minutes = dto.getMinutesCompleted();
 
         Report report = new Report();
         report.setCreatedAt(LocalDateTime.now());
@@ -168,6 +198,8 @@ public class TutorServiceImpl implements ITutorService {
 
     @Override
     public List<ReportDTO> getReportsByCourse(Integer userId, Integer courseId) {
+        requireOwnedCourse(userId, courseId);
+
         return this.reportRepository.findByCourseId(courseId).stream()
                 .map(this.interactionMapper::convertToReportDTO)
                 .toList();
