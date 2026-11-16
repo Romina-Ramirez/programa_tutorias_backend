@@ -1,7 +1,7 @@
 package com.tutorias.Service;
 
-import java.security.SecureRandom;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -37,6 +37,9 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Override
     public AdminDTO createAdmin(AdminDTO dto) {
 
@@ -60,6 +63,7 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
                 .password(null)
                 .role(Role.ADMIN)
                 .isDeleted(false)
+                .activated(false)
                 .build();
 
         this.userRepository.save(user);
@@ -89,17 +93,20 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
             throw new RuntimeException("El usuario indicado no es un administrador.");
         }
 
-        String password = generateRandomPassword(8);
-        String hashed = this.passwordEncoder.encode(password);
-
-        boolean updated = this.userRepository.updatePassword(user.getEmail(), hashed);
-
-        if (!updated) {
-            throw new RuntimeException("No se pudo cambiar la contraseña");
+        if (Boolean.TRUE.equals(user.getActivated())) {
+            throw new RuntimeException("La cuenta de este administrador ya fue activada.");
         }
 
+        // Enlace de activación de un solo uso; emitir uno nuevo invalida el anterior.
+        String tokenId = UUID.randomUUID().toString();
+        user.setActivated(false);
+        user.setSetupTokenId(tokenId);
+        this.userRepository.update(user);
+
+        String activationToken = this.jwtService.generateActivationToken(user.getEmail(), tokenId);
+
         try {
-            this.emailService.sendnewTutorOrAdmin(user.getEmail(),password,user.getRole().name());
+            this.emailService.sendAccountActivation(user.getEmail(), activationToken);
             return true;
 
         } catch (MessagingException e) {
@@ -206,14 +213,4 @@ public class SuperAdminServiceImpl implements ISuperAdminService {
         return this.userMapper.convertToAdminDTO(user);
     }
 
-    public static String generateRandomPassword(int length) {
-        String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        SecureRandom RANDOM = new SecureRandom();
-
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            sb.append(CHARS.charAt(RANDOM.nextInt(CHARS.length())));
-        }
-        return sb.toString();
-    }
 }

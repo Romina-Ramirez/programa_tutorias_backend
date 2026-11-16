@@ -50,9 +50,10 @@ public class EmailServiceImpl implements IEmailService {
 
     @Override
     @Async("mailExecutor")
-    public void sendnewTutorOrAdmin(String to, String password, String role) throws MessagingException {
+    public void sendAccountActivation(String to, String activationToken) throws MessagingException {
 
-        String link = frontendUrl + "/login";
+        String link = frontendUrl + "/activar?token="
+                + URLEncoder.encode(activationToken, StandardCharsets.UTF_8);
 
         String html = """
             <!DOCTYPE html>
@@ -80,8 +81,9 @@ public class EmailServiceImpl implements IEmailService {
                                         </p>
 
                                         <p style="color: #333;">
-                                            Para ingresar a la plataforma, haga clic en el siguiente botón
-                                            utilizando su correo electrónico y la contraseña asignada:
+                                            Para activarla, haga clic en el siguiente botón y defina su
+                                            propia contraseña. El enlace es personal, de un solo uso y
+                                            caduca en 48 horas:
                                         </p>
 
                                         <div style="text-align: center; margin: 30px 0;">
@@ -95,12 +97,13 @@ public class EmailServiceImpl implements IEmailService {
                                                 font-weight: bold;
                                                 display: inline-block;
                                             ">
-                                                Acceder a la plataforma
+                                                Activar mi cuenta
                                             </a>
                                         </div>
 
-                                        <p style="color: #333;">
-                                            <strong>Contraseña:</strong> %s
+                                        <p style="font-size: 0.9em; color: #666;">
+                                            Por su seguridad, no comparta este enlace con terceros.
+                                            Si el enlace caduca, su administrador puede reenviarle uno nuevo.
                                         </p>
 
                                         <p style="font-size: 0.9em; color: #666;">
@@ -122,9 +125,9 @@ public class EmailServiceImpl implements IEmailService {
 
             </body>
             </html>
-            """.formatted(link, password);
+            """.formatted(link);
 
-        sendEmail(to, "Acceso al Programa de Tutorías", html);
+        sendEmail(to, "Active su cuenta del Programa de Tutorías", html);
     }
 
     @Override

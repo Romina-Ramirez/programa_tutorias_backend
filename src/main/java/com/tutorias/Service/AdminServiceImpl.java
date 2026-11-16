@@ -1,8 +1,8 @@
 package com.tutorias.Service;
 
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -69,6 +69,9 @@ public class AdminServiceImpl implements IAdminService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtService jwtService;
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -96,6 +99,7 @@ public class AdminServiceImpl implements IAdminService {
                 .password(null)
                 .role(Role.TUTOR)
                 .isDeleted(false)
+                .activated(false)
                 .build();
 
         this.userRepository.save(user);
@@ -139,17 +143,20 @@ public class AdminServiceImpl implements IAdminService {
             throw new RuntimeException("El usuario indicado no es un tutor.");
         }
 
-        String password = generateRandomPassword(8);
-        String hashed = this.passwordEncoder.encode(password);
-
-        boolean updated = this.userRepository.updatePassword(user.getEmail(), hashed);
-
-        if (!updated) {
-            throw new RuntimeException("No se pudo crear la contraseña.");
+        if (Boolean.TRUE.equals(user.getActivated())) {
+            throw new RuntimeException("La cuenta de este tutor ya fue activada.");
         }
 
+        // Enlace de activación de un solo uso; emitir uno nuevo invalida el anterior.
+        String tokenId = UUID.randomUUID().toString();
+        user.setActivated(false);
+        user.setSetupTokenId(tokenId);
+        this.userRepository.update(user);
+
+        String activationToken = this.jwtService.generateActivationToken(user.getEmail(), tokenId);
+
         try {
-            this.emailService.sendnewTutorOrAdmin(user.getEmail(), password, user.getRole().name());
+            this.emailService.sendAccountActivation(user.getEmail(), activationToken);
             this.tutorRepository.activate(tutorId);
             return true;
         } catch (MessagingException e) {
@@ -349,16 +356,4 @@ public class AdminServiceImpl implements IAdminService {
         return this.interactionMapper.convertToGeneralReportDTO(gr, tutorName, reports);
     }
 
-    // Generar una contraseña aleatoria
-    public static String generateRandomPassword(int length) {
-        String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        SecureRandom RANDOM = new SecureRandom();
-
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            sb.append(CHARS.charAt(RANDOM.nextInt(CHARS.length())));
-        }
-        return sb.toString();
-    }
-    
 }

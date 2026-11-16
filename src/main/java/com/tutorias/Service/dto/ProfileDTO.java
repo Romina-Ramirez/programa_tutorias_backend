@@ -30,4 +30,7 @@ public class ProfileDTO {
     private Integer adminId;
     private Boolean isActive;
     private String availableSchedule;
+
+    // false = cuenta pendiente de activación (aún no define su contraseña)
+    private Boolean activated;
 }

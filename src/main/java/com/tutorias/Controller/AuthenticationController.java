@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.tutorias.Config.AuthenticatedUser;
 import com.tutorias.Service.IAuthenticationService;
+import com.tutorias.Service.dto.ActivateAccountRequestDTO;
 import com.tutorias.Service.dto.ChangePasswordRequestDTO;
 import com.tutorias.Service.dto.LoginRequestDTO;
 import com.tutorias.Service.dto.LoginResponseDTO;
@@ -39,6 +40,11 @@ public class AuthenticationController {
     @PostMapping("/register-student")
     public ResponseEntity<Boolean> registerStudent(@RequestBody RegisterStudentDTO dto) {
         return ResponseEntity.ok(authenticationService.registerStudent(dto));
+    }
+
+    @PostMapping("/activate")
+    public ResponseEntity<Boolean> activateAccount(@RequestBody ActivateAccountRequestDTO dto) {
+        return ResponseEntity.ok(authenticationService.activateAccount(dto.getToken(), dto.getPassword()));
     }
 
     @PostMapping("/request-password-reset")

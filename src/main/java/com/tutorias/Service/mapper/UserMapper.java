@@ -42,6 +42,7 @@ public class UserMapper {
                 .adminId(tutor != null ? tutor.getAdminId() : null)
                 .isActive(tutor != null ? tutor.getIsActive() : null)
                 .availableSchedule(tutor != null ? tutor.getAvailableSchedule() : null)
+                .activated(user.getActivated())
                 .build();
     }
 
@@ -64,6 +65,7 @@ public class UserMapper {
                 .lastName(user.getLastName())
                 .email(user.getEmail())
                 .idCard(user.getIdCard())
+                .activated(user.getActivated())
                 .build();
     }
 }

@@ -48,6 +48,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
+        // Solo los tokens de ACCESO autentican peticiones: un token de refresh,
+        // de recuperación o de activación no sirve para consumir la API.
+        // (purpose null = token de acceso emitido antes de este cambio)
+        String purpose = jwtService.getPurposeFromToken(token);
+        if (purpose != null && !"ACCESS".equals(purpose)) {
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            response.getWriter().write("El token no es válido para esta operación.");
+            return;
+        }
+
         Integer userId = jwtService.getUserIdFromToken(token);
         String email = jwtService.getEmailFromToken(token);
         String role = jwtService.getRoleFromToken(token);

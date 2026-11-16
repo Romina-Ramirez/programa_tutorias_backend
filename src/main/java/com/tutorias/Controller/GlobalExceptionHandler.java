@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.tutorias.Service.exception.EmailAlreadyExistsException;
 import com.tutorias.Service.exception.EmailSendException;
 import com.tutorias.Service.exception.NotFoundException;
+import com.tutorias.Service.exception.TooManyAttemptsException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -18,6 +19,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity
                 .status(HttpStatus.FORBIDDEN)
                 .body("No tiene permisos para acceder a este recurso.");
+    }
+
+    @ExceptionHandler(TooManyAttemptsException.class)
+    public ResponseEntity<String> handleTooManyAttempts(TooManyAttemptsException ex) {
+        return ResponseEntity
+                .status(HttpStatus.TOO_MANY_REQUESTS)
+                .body(ex.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)

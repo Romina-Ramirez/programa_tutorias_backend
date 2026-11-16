@@ -20,4 +20,7 @@ public class AdminDTO {
     private String name;
     private String lastName;
     private String email;
+
+    // false = cuenta pendiente de activación (aún no define su contraseña)
+    private Boolean activated;
 }

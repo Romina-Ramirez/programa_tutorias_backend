@@ -66,6 +66,17 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    // null = cuenta creada antes del flujo de activación (se trata como activada);
+    // false = pendiente de activar; true = activada por el propio usuario.
+    @Column(name = "user_activated")
+    private Boolean activated;
+
+    // Identificador (jti) del último enlace de un solo uso emitido
+    // (activación de cuenta o recuperación de contraseña). Emitir uno nuevo
+    // invalida el anterior; al consumirse se limpia.
+    @Column(name = "user_setup_token_id")
+    private String setupTokenId;
+
     @OneToMany(mappedBy = "user")
     @JsonIgnore
     private List<ForumComment> forumComments;

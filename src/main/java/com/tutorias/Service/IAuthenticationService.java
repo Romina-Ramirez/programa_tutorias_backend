@@ -14,6 +14,8 @@ public interface IAuthenticationService {
 
     public boolean changePassword(String email, String newPassword, String resetToken, AuthenticatedUser authenticatedUser);
 
+    public boolean activateAccount(String token, String newPassword);
+
     public LoginResponseDTO refreshToken(String refreshToken);
     
 }

@@ -32,6 +32,9 @@ public class JwtService {
     @Value("${jwt.password-reset-expiration:1800000}")
     private Long passwordResetExpiration;
 
+    @Value("${jwt.activation-expiration:172800000}") // 48 horas
+    private Long activationExpiration;
+
     private SecretKey secretKey;
 
     @PostConstruct
@@ -50,6 +53,7 @@ public class JwtService {
         claims.put("userId", userId);
         claims.put("email", email);
         claims.put("role", role);
+        claims.put("purpose", "ACCESS");
 
         return Jwts.builder()
                 .claims(claims)
@@ -64,7 +68,11 @@ public class JwtService {
      * Genera un token JWT de refresh
      */
     public String generateRefreshToken(Integer userId, String email) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("purpose", "REFRESH");
+
         return Jwts.builder()
+                .claims(claims)
                 .subject(email)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + refreshExpiration))
@@ -72,15 +80,38 @@ public class JwtService {
                 .compact();
     }
 
-    public String generatePasswordResetToken(String email) {
+    /**
+     * Token de recuperación de contraseña: de un solo uso (el jti se guarda en
+     * la cuenta y se verifica al consumirlo).
+     */
+    public String generatePasswordResetToken(String email, String tokenId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("purpose", "PASSWORD_RESET");
 
         return Jwts.builder()
                 .claims(claims)
+                .id(tokenId)
                 .subject(email)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + passwordResetExpiration))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    /**
+     * Token de activación de cuenta: el usuario define su contraseña con él.
+     * De un solo uso y con expiración propia (48 h por defecto).
+     */
+    public String generateActivationToken(String email, String tokenId) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("purpose", "ACCOUNT_ACTIVATION");
+
+        return Jwts.builder()
+                .claims(claims)
+                .id(tokenId)
+                .subject(email)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + activationExpiration))
                 .signWith(secretKey)
                 .compact();
     }
@@ -143,6 +174,15 @@ public class JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
         return claims.get("purpose", String.class);
+    }
+
+    public String getTokenIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+        return claims.getId();
     }
 
     /**
